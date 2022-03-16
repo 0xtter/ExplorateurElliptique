@@ -1,13 +1,13 @@
-<mxfile host="app.diagrams.net" modified="2022-03-16T09:55:29.574Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.36" etag="VaJCdNmjcUmx2QaxUa_G" version="17.1.3" type="github" pages="2">
+<mxfile host="app.diagrams.net" modified="2022-03-16T09:56:07.644Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.36" etag="fG0AopG0zBn1IcyF1p-Z" version="17.1.3" type="github" pages="2">
   <diagram id="Onil-J-Lb2S4ngcwoNs3" name="InterfaceGraphique">
-    <mxGraphModel grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" page="1" fold="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="823" dy="459" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
       </root>
     </mxGraphModel>
   </diagram>
-  <diagram id="YGg2rZB6yz5wcsw4N4a4" name="Page-2">
+  <diagram id="YGg2rZB6yz5wcsw4N4a4" name="FctsCrypto">
     <mxGraphModel dx="782" dy="436" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="4x20KhhNzzTn9MA3KTla-0" />
