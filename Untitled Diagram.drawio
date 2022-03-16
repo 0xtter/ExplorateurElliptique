@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2022-03-16T12:39:08.247Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.109 Safari/537.36 OPR/84.0.4316.36" etag="Ziq8Hi4v2i-nsFjTIGmw" version="17.1.3" type="github" pages="2">
+<mxfile host="app.diagrams.net" modified="2022-03-16T12:54:23.812Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.109 Safari/537.36 OPR/84.0.4316.36" etag="hDWlsjJ7wrX36HIF9sWd" version="17.1.3" type="github" pages="2">
   <diagram id="Onil-J-Lb2S4ngcwoNs3" name="InterfaceGraphique">
     <mxGraphModel dx="783" dy="411" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -8,7 +8,7 @@
           <mxGeometry x="30" y="10" width="90" height="40" as="geometry" />
         </mxCell>
         <mxCell id="Tepk4pUlId4ZBmwnH0sn-2" value="Graphic" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
-          <mxGeometry x="344" y="80" width="140" height="104" as="geometry">
+          <mxGeometry x="344" y="80" width="140" height="170" as="geometry">
             <mxRectangle x="344" y="80" width="70" height="26" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
@@ -18,8 +18,8 @@
         <mxCell id="Tepk4pUlId4ZBmwnH0sn-4" value="+ Id : String" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="Tepk4pUlId4ZBmwnH0sn-2" vertex="1">
           <mxGeometry y="52" width="140" height="26" as="geometry" />
         </mxCell>
-        <mxCell id="Tepk4pUlId4ZBmwnH0sn-5" value="+ field: type" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="Tepk4pUlId4ZBmwnH0sn-2" vertex="1">
-          <mxGeometry y="78" width="140" height="26" as="geometry" />
+        <mxCell id="Tepk4pUlId4ZBmwnH0sn-5" value="+ a : float&#xa;+ b : float&#xa;+ c : float&#xa;+ d : float&#xa;zda" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="Tepk4pUlId4ZBmwnH0sn-2" vertex="1">
+          <mxGeometry y="78" width="140" height="92" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
