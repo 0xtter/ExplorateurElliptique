@@ -27,6 +27,7 @@ class Graphic {
       keypad: false,
       language: "fr",
       settingsMenu: false,
+      showResetButtonOnGraphpaper: true,
       //expressions: false
     });
   }
@@ -89,14 +90,17 @@ class RealCurveGraph extends Graphic {
    * @param {array} P - The point coordinates as an array 
    * @return {number} return the id of the point created.
    */
-  addDraggablePoint(P,Axis = 'XY') {
+  addDraggablePoint(P,Axis) {
     if (!Array.isArray(P)) {
       throw new Error("Wrong Inputs. 'P' must be an array");
+    }
+    else if (Axis != 'X' && Axis != 'Y' && Axis != 'XY'){
+      throw new Error("Wrong Inputs. 'Axis' must be either 'X','Y' or 'XY'");
     }
 
     try {
       this.pointCount++;
-      this.calculator.setExpression({ id: `point${this.pointCount}`, latex: `(${P})`, showLabel: true, dragMode: Desmos.DragModes.XY });
+      this.calculator.setExpression({ id: `point${this.pointCount}`, latex: `(${P})`, showLabel: true, dragMode: Axis });
       return this.pointCount;
     } catch (error) {
       throw new Error(`An error has occured creating the point : ${error}`);
@@ -110,9 +114,9 @@ class RealCurveGraph extends Graphic {
    * @param {array} newP - The new point coordinates as an array
    */
   updatePoint(id, newP) {
-    if (typeof id != "number" || !Array.isArray(newP)) {
-      throw new Error("Wrong Inputs. 'id' must be a number and 'newP' must be an array");
-    }
+    // if (typeof id != "number" || !Array.isArray(newP)) {
+    //   throw new Error("Wrong Inputs. 'id' must be a number and 'newP' must be an array");
+    // }
 
     if (id > this.pointCount) {
       throw new Error(`Selected point : ${id} do not exist. Number of points : ${this.pointCount}`);
@@ -199,7 +203,15 @@ class WeierstrassGraph extends RealCurveGraph {
    * show the Weierstrass curve on the graph
    */
   showCurve() {
-    this.calculator.setExpression({ id: `curve`, latex: `y^2 + ${this.a1} xy + ${this.a3} * y = x^3 + ${this.a2} * x^2 + ${this.a4}*x + ${this.a6}` });
+    this.calculator.setExpressions([
+      {id:'a_1', latex:`a_1=${this.a1}`},
+      {id:'a_2', latex:`a_2=${this.a2}`},
+      {id:'a_3', latex:`a_3=${this.a3}`},
+      {id:'a_4', latex:`a_4=${this.a4}`},
+      {id:'a_6', latex:`a_6=${this.a6}`},
+      {id: 'curve', latex: 'y^2 + a_1 xy + a_3 * y = x^3 + a_2 * x^2 + a_4*x + a_6', label: true}
+    ])
+    //this.calculator.setExpression({ id: `curve`, latex: `y^2 + ${this.a1} xy + ${this.a3} * y = x^3 + ${this.a2} * x^2 + ${this.a4}*x + ${this.a6}` });
     this.saveGraphicState();
   }
 }
