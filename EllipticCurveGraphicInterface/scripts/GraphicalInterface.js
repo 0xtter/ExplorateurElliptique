@@ -32,14 +32,17 @@ class Graphic {
     });
   }
 
-  saveGraphicState(){
+  saveGraphicState() {
     this.savedState = this.calculator.getState();
   }
 
-  loadGraphicState(){
+  loadGraphicState() {
     this.calculator.setState(this.savedState);
   }
 
+  getElementById(id) {
+    return this.calculator.getExpressions().find(element => element.id == id)
+  }
 }
 
 /** Class representing a real elliptic curve.*/
@@ -53,6 +56,7 @@ class RealCurveGraph extends Graphic {
     super(element);
     this.pointCount = 0;
     this.lineCount = 0;
+    this.dynamicLines = [];
     super.setup();
   }
 
@@ -60,7 +64,16 @@ class RealCurveGraph extends Graphic {
    * show the curve on the graph
    */
   showCurve() {
-    throw new Error('You have to implement the method showCurve!');
+    throw new Error('You have to implement the method showCurve for this curve!');
+  }
+
+  /**
+   * add a point on the curve giving his x position on the graph
+   * @param {number} xPos - The point X coordinate 
+   * @return {number} return the id of the point created.
+   */
+  addCurvePoint(xPos) {
+    throw new Error('You have to implement the method addCurvePoint for this curve!');
   }
 
   /**
@@ -70,18 +83,7 @@ class RealCurveGraph extends Graphic {
    * @return {number} return the id of the point created.
    */
   addStaticPoint(P) {
-    if (!Array.isArray(P)) {
-      throw new Error("Wrong Inputs. 'P' must be an array");
-    }
-
-    try {
-      this.pointCount++;
-      this.calculator.setExpression({ id: `point${this.pointCount}`, latex: `(${P})`, showLabel: true });
-      return this.pointCount;
-    } catch (error) {
-      throw new Error(`An error has occured creating the point : ${error}`);
-    }
-
+    return this.addDraggablePoint(P, 'NONE');
   }
 
   /**
@@ -90,12 +92,12 @@ class RealCurveGraph extends Graphic {
    * @param {array} P - The point coordinates as an array 
    * @return {number} return the id of the point created.
    */
-  addDraggablePoint(P,Axis) {
+  addDraggablePoint(P, Axis) {
     if (!Array.isArray(P)) {
       throw new Error("Wrong Inputs. 'P' must be an array");
     }
-    else if (Axis != 'X' && Axis != 'Y' && Axis != 'XY'){
-      throw new Error("Wrong Inputs. 'Axis' must be either 'X','Y' or 'XY'");
+    else if (Axis != 'X' && Axis != 'Y' && Axis != 'XY' && Axis != 'NONE') {
+      throw new Error("Wrong Inputs. 'Axis' must be either 'X','Y', 'XY' or 'NONE'");
     }
 
     try {
@@ -114,9 +116,9 @@ class RealCurveGraph extends Graphic {
    * @param {array} newP - The new point coordinates as an array
    */
   updatePoint(id, newP) {
-    // if (typeof id != "number" || !Array.isArray(newP)) {
-    //   throw new Error("Wrong Inputs. 'id' must be a number and 'newP' must be an array");
-    // }
+    if (typeof id != "number" || !Array.isArray(newP)) {
+      throw new Error("Wrong Inputs. 'id' must be a number and 'newP' must be an array");
+    }
 
     if (id > this.pointCount) {
       throw new Error(`Selected point : ${id} do not exist. Number of points : ${this.pointCount}`);
@@ -171,6 +173,34 @@ class RealCurveGraph extends Graphic {
       throw new Error(`Line ${id} not found : ${error}`);
     }
   }
+
+/**
+ * add a line linked to 2 points on the curve giving the id of these points
+ * @param {array} idP - The first point's id 
+ * @param {array} idQ - The second point's id 
+ * @return {number} return the id of the line created.
+ */
+  addDynamicLine(idP, idQ) { //focntion lancée dans un thread?
+    var P = [this.calculator.HelperExpression({ latex: 'x_1' }), this.calculator.HelperExpression({ latex: 'y_1' })];
+    var Q = [this.calculator.HelperExpression({ latex: 'x_2' }), this.calculator.HelperExpression({ latex: 'y_2' })];
+
+    console.log(P)
+
+    P[0].observe('numericValue', (function () {
+      var x1 = P[0].numericValue;
+      var y1 = P[1].numericValue;
+      var x2 = Q[0].numericValue;
+      var y2 = Q[1].numericValue;
+      console.log(this)
+    }).call(this))
+    Q[0].observe('numericValue', (function () {
+      var x1 = P[0].numericValue;
+      var y1 = P[1].numericValue;
+      var x2 = Q[0].numericValue;
+      var y2 = Q[1].numericValue;
+      console.log(x2, y2)
+    }).call(this))
+  }
 }
 
 /** Class representing a real Weierstrass elliptic curve.*/
@@ -200,18 +230,31 @@ class WeierstrassGraph extends RealCurveGraph {
   }
 
   /**
-   * show the Weierstrass curve on the graph
+   * show/update the Weierstrass curve on the graph
    */
   showCurve() {
     this.calculator.setExpressions([
-      {id:'a_1', latex:`a_1=${this.a1}`},
-      {id:'a_2', latex:`a_2=${this.a2}`},
-      {id:'a_3', latex:`a_3=${this.a3}`},
-      {id:'a_4', latex:`a_4=${this.a4}`},
-      {id:'a_6', latex:`a_6=${this.a6}`},
-      {id: 'curve', latex: 'y^2 + a_1 xy + a_3 * y = x^3 + a_2 * x^2 + a_4*x + a_6', label: true}
-    ])
-    //this.calculator.setExpression({ id: `curve`, latex: `y^2 + ${this.a1} xy + ${this.a3} * y = x^3 + ${this.a2} * x^2 + ${this.a4}*x + ${this.a6}` });
-    this.saveGraphicState();
+      { id: 'a_1', latex: `a_1=${this.a1}` },
+      { id: 'a_2', latex: `a_2=${this.a2}` },
+      { id: 'a_3', latex: `a_3=${this.a3}` },
+      { id: 'a_4', latex: `a_4=${this.a4}` },
+      { id: 'a_6', latex: `a_6=${this.a6}` },
+      { id: 'curve', latex: 'y^2 + a_1 xy + a_3 * y = x^3 + a_2 * x^2 + a_4*x + a_6' }
+    ]);
   }
+  /**
+   * add a point on the curve giving his x position on the graph
+   * @param {number} xPos - The point X coordinate 
+   * @return {number} return the id of the point created.
+   */
+  addCurvePoint(xPos) {
+    this.pointCount++;
+    this.calculator.setExpressions([
+      { id: `x_${this.pointCount}`, latex: `x_${this.pointCount}=${xPos}` },
+      { id: `y_${this.pointCount}`, latex: `y_{${this.pointCount}}=\\frac{1}{2}(\\sqrt{(a_{1}x_{${this.pointCount}}+a_{3})^{2}+4(a_{2}x_{${this.pointCount}}^{2}+a_{4}x_{${this.pointCount}}+a_{6}+x_{${this.pointCount}}^{3})}-a_{3}-a_{1}x_{${this.pointCount}})` },
+      { id: `point${this.pointCount}`, latex: `(x_${this.pointCount},y_${this.pointCount})` }
+    ]);
+    return this.pointCount;
+  }
+
 }
