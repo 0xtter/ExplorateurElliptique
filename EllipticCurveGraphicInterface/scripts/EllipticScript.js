@@ -8,7 +8,7 @@ function main() {
     graph1.addDynamicLine(1,2);
     graph1.addStaticPoint([2,2]);
     graph1.saveGraphicState();
-
+    console.log(graph1.getExpressionById('a_1'))
     i = 0
 
 

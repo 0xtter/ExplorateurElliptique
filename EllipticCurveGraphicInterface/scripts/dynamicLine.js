@@ -15,13 +15,21 @@ class DynamicLine {
         this.P[1].observe('numericValue', (function () {
             that.objP.x = that.P[0].numericValue;
             that.objP.y = that.P[1].numericValue;
-            eq = that.objP.lineEqCoeffWithPoint(that.objQ);
+            try{
+                eq = that.objP.lineEqCoeffWithPoint(that.objQ);
+            }catch(error){
+                console.log(error)
+            }
             calculator.updateLine(that.id, eq[0], eq[1])
         }))
         this.Q[1].observe('numericValue', (function () {
             that.objQ.x = that.Q[0].numericValue;
             that.objQ.y = that.Q[1].numericValue;
-            eq = that.objQ.lineEqCoeffWithPoint(that.objP);
+            try{
+                eq = that.objQ.lineEqCoeffWithPoint(that.objP);
+            }catch(error){
+                console.log(error)
+            }
             calculator.updateLine(that.id, eq[0], eq[1])
         }))
     }

@@ -41,7 +41,7 @@ class Graphic {
     this.calculator.setState(this.savedState);
   }
 
-  getElementById(id) {
+  getExpressionById(id) {
     return this.calculator.getExpressions().find(element => element.id == id)
   }
 }
@@ -55,8 +55,8 @@ class RealCurveGraph extends Graphic {
   */
   constructor(element) {
     super(element);
-    this.pointCount = 0;
-    this.lineCount = 0;
+    this.pointId = 0;
+    this.lineId = 0;
     this.dynamicLines = [];
     super.setup();
   }
@@ -102,9 +102,9 @@ class RealCurveGraph extends Graphic {
     }
 
     try {
-      this.pointCount++;
-      this.calculator.setExpression({ id: `point${this.pointCount}`, latex: `(${P})`, showLabel: true, dragMode: Axis });
-      return this.pointCount;
+      this.pointId++;
+      this.calculator.setExpression({ id: `point${this.pointId}`, latex: `P_${this.pointId}=(${P})`, showLabel: true, dragMode: Axis });
+      return this.pointId;
     } catch (error) {
       throw new Error(`An error has occured creating the point : ${error}`);
     }
@@ -115,14 +115,14 @@ class RealCurveGraph extends Graphic {
    * 
    * @param {number} id - The id of the point to update
    * @param {array} newP - The new point coordinates as an array
-   */
+   */ 
   updatePoint(id, newP) {
     if (typeof id != "number" || !Array.isArray(newP)) {
       throw new Error("Wrong Inputs. 'id' must be a number and 'newP' must be an array");
     }
 
-    if (id > this.pointCount) {
-      throw new Error(`Selected point : ${id} do not exist. Number of points : ${this.pointCount}`);
+    if (id > this.pointId) {
+      throw new Error(`Selected point : ${id} do not exist. Number of points : ${this.pointId}`);
     }
 
     try {
@@ -145,9 +145,9 @@ class RealCurveGraph extends Graphic {
     }
 
     try {
-      this.lineCount++;
-      this.calculator.setExpression({ id: `line${this.lineCount}`, latex: `y = ${gradient}*x + ${b}` });
-      return this.lineCount;
+      this.lineId++;
+      this.calculator.setExpression({ id: `line${this.lineId}`, latex: `y = ${gradient}*x + ${b}` });
+      return this.lineId;
     } catch (error) {
       throw new Error(`An error has occured creating the line : ${error}`);
     }
@@ -164,12 +164,12 @@ class RealCurveGraph extends Graphic {
       throw new Error("Wrong Inputs. 'id', 'newline' and 'b' must be numbers");
     }
 
-    if (id > this.lineCount) {
-      throw new Error(`Selected line : ${id} do not exist. Number of lines : ${this.lineCount}`);
+    if (id > this.lineId) {
+      throw new Error(`Selected line : ${id} do not exist. Number of lines : ${this.lineId}`);
     }
 
     try {
-      this.calculator.setExpression({ id: `line${this.lineCount}`, latex: `y = ${newGradient}*x + ${newB}` }); // à revoir le try (set expression ne va pas renvoyer une erreur si point existe pas)
+      this.calculator.setExpression({ id: `line${this.lineId}`, latex: `y = ${newGradient}*x + ${newB}` }); // à revoir le try (set expression ne va pas renvoyer une erreur si point existe pas)
     } catch (error) {
       throw new Error(`Line ${id} not found : ${error}`);
     }
@@ -195,10 +195,10 @@ class RealCurveGraph extends Graphic {
    */
   addDynamicLine(idP, idQ) {
     this.addLine(1, 1);
-    var dynamicLine = new DynamicLine(idP, idQ, this.lineCount, this.calculator)
+    var dynamicLine = new DynamicLine(idP, idQ, this.lineId, this.calculator)
     dynamicLine.startUpdatingLine(this)
     this.dynamicLines.push(dynamicLine)
-    return this.lineCount;
+    return this.lineId;
   }
 
 }
@@ -241,6 +241,7 @@ class WeierstrassGraph extends RealCurveGraph {
       { id: 'a_6', latex: `a_6=${this.a6}` },
       { id: 'curve', latex: 'y^2 + a_1 xy + a_3 * y = x^3 + a_2 * x^2 + a_4*x + a_6' }
     ]);
+    this.saveGraphicState();
   }
   /**
    * add a point on the curve giving his x position on the graph
@@ -248,14 +249,13 @@ class WeierstrassGraph extends RealCurveGraph {
    * @return {number} return the id of the point created.
    */
   addCurvePoint(xPos) {
-    this.pointCount++;
+    this.pointId++;
     this.calculator.setExpressions([
-      { id: `x_${this.pointCount}`, latex: `x_${this.pointCount}=${xPos}` },
-      { id: `y_${this.pointCount}`, latex: `y_{${this.pointCount}}=\\frac{1}{2}(\\sqrt{(a_{1}x_{${this.pointCount}}+a_{3})^{2}+4(a_{2}x_{${this.pointCount}}^{2}+a_{4}x_{${this.pointCount}}+a_{6}+x_{${this.pointCount}}^{3})}-a_{3}-a_{1}x_{${this.pointCount}})` },
-      { id: `point${this.pointCount}`, latex: `(x_${this.pointCount},y_${this.pointCount})` }
+      { id: `x_${this.pointId}`, latex: `x_${this.pointId}=${xPos}` },
+      { id: `y_${this.pointId}`, latex: `y_{${this.pointId}}=\\frac{1}{2}(\\sqrt{(a_{1}x_{${this.pointId}}+a_{3})^{2}+4(a_{2}x_{${this.pointId}}^{2}+a_{4}x_{${this.pointId}}+a_{6}+x_{${this.pointId}}^{3})}-a_{3}-a_{1}x_{${this.pointId}})` },
+      { id: `point${this.pointId}`, latex: `(x_${this.pointId},y_${this.pointId})` }
     ]);
-    this.saveGraphicState();
-    return this.pointCount;
+    return this.pointId;
   }
 
 }
