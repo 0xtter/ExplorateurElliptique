@@ -12,6 +12,7 @@ class Graphic {
       throw error;
     }
     this.calculator = Desmos.GraphingCalculator(this.element);
+    this.dynamicLines = [];
   }
 
   get getElement() {
@@ -174,33 +175,32 @@ class RealCurveGraph extends Graphic {
     }
   }
 
-/**
- * add a line linked to 2 points on the curve giving the id of these points
- * @param {array} idP - The first point's id 
- * @param {array} idQ - The second point's id 
- * @return {number} return the id of the line created.
- */
-  addDynamicLine(idP, idQ) { //focntion lancée dans un thread?
-    var P = [this.calculator.HelperExpression({ latex: 'x_1' }), this.calculator.HelperExpression({ latex: 'y_1' })];
-    var Q = [this.calculator.HelperExpression({ latex: 'x_2' }), this.calculator.HelperExpression({ latex: 'y_2' })];
-
-    console.log(P)
-
-    P[0].observe('numericValue', (function () {
-      var x1 = P[0].numericValue;
-      var y1 = P[1].numericValue;
-      var x2 = Q[0].numericValue;
-      var y2 = Q[1].numericValue;
-      console.log(this)
-    }).call(this))
-    Q[0].observe('numericValue', (function () {
-      var x1 = P[0].numericValue;
-      var y1 = P[1].numericValue;
-      var x2 = Q[0].numericValue;
-      var y2 = Q[1].numericValue;
-      console.log(x2, y2)
-    }).call(this))
+  /**
+   * remove a line linked to 2 points on the curve giving the id of the line
+   * @param {number} id - The line's id 
+   */
+  removeDynamicLine(id) {
+    var line = this.dynamicLines[id-1];
+    line.P[1].unobserve('numericValue');
+    line.Q[1].unobserve('numericValue');
+    this.calculator.removeExpression({id: `line${id}`});
   }
+
+
+  /**
+   * add a line linked to 2 points on the curve giving the id of these points
+   * @param {array} idP - The first point's id 
+   * @param {array} idQ - The second point's id 
+   * @return {number} return the id of the line created.
+   */
+  addDynamicLine(idP, idQ) {
+    this.addLine(1, 1);
+    var dynamicLine = new DynamicLine(idP, idQ, this.lineCount, this.calculator)
+    dynamicLine.startUpdatingLine(this)
+    this.dynamicLines.push(dynamicLine)
+    return this.lineCount;
+  }
+
 }
 
 /** Class representing a real Weierstrass elliptic curve.*/
@@ -254,6 +254,7 @@ class WeierstrassGraph extends RealCurveGraph {
       { id: `y_${this.pointCount}`, latex: `y_{${this.pointCount}}=\\frac{1}{2}(\\sqrt{(a_{1}x_{${this.pointCount}}+a_{3})^{2}+4(a_{2}x_{${this.pointCount}}^{2}+a_{4}x_{${this.pointCount}}+a_{6}+x_{${this.pointCount}}^{3})}-a_{3}-a_{1}x_{${this.pointCount}})` },
       { id: `point${this.pointCount}`, latex: `(x_${this.pointCount},y_${this.pointCount})` }
     ]);
+    this.saveGraphicState();
     return this.pointCount;
   }
 
