@@ -12,7 +12,6 @@ class Graphic {
       throw error;
     }
     this.calculator = Desmos.GraphingCalculator(this.element);
-    this.dynamicLines = [];
   }
 
   get getElement() {
@@ -56,8 +55,9 @@ class RealCurveGraph extends Graphic {
   constructor(element) {
     super(element);
     this.pointId = 0;
+    this.points = {};
     this.lineId = 0;
-    this.dynamicLines = [];
+    this.lines = {};
     super.setup();
   }
 
@@ -103,13 +103,19 @@ class RealCurveGraph extends Graphic {
 
     try {
       this.pointId++;
-      this.calculator.setExpression({ id: `point${this.pointId}`, latex: `P_${this.pointId}=(${P})`, showLabel: true, dragMode: Axis });
+      this.calculator.setExpressions([
+        { id: `x_${this.pointId}`, latex: `x_${this.pointId}=${P[0]}` },
+        { id: `y_${this.pointId}`, latex: `y_${this.pointId}=${P[1]}` },
+        { id: `point${this.pointId}`, latex: `(x_${this.pointId},y_${this.pointId})`, showLabel: true, dragMode: Axis  }
+      ]);
+      
+      this.points[this.pointId]=new GraphPoint(P[0],P[1],this.pointId,this);
       return this.pointId;
     } catch (error) {
       throw new Error(`An error has occured creating the point : ${error}`);
     }
-
   }
+
   /**
    * update a point position on the graph giving his id and his new coordinates
    * 
@@ -180,7 +186,7 @@ class RealCurveGraph extends Graphic {
    * @param {number} id - The line's id 
    */
   removeDynamicLine(id) {
-    var line = this.dynamicLines[id-1];
+    var line = this.lines[id-1];
     line.P[1].unobserve('numericValue');
     line.Q[1].unobserve('numericValue');
     this.calculator.removeExpression({id: `line${id}`});
@@ -189,15 +195,15 @@ class RealCurveGraph extends Graphic {
 
   /**
    * add a line linked to 2 points on the curve giving the id of these points
-   * @param {array} idP - The first point's id 
-   * @param {array} idQ - The second point's id 
+   * @param {array} P - The first point's id 
+   * @param {array} Q - The second point's id 
    * @return {number} return the id of the line created.
    */
-  addDynamicLine(idP, idQ) {
+  addDynamicLine(P, Q) {
     this.addLine(1, 1);
-    var dynamicLine = new DynamicLine(idP, idQ, this.lineId, this.calculator)
+    var dynamicLine = new DynamicLine(P, Q, this.lineId, this)
     dynamicLine.startUpdatingLine(this)
-    this.dynamicLines.push(dynamicLine)
+    this.lines[this.lineId]= dynamicLine;
     return this.lineId;
   }
 
@@ -253,8 +259,12 @@ class WeierstrassGraph extends RealCurveGraph {
     this.calculator.setExpressions([
       { id: `x_${this.pointId}`, latex: `x_${this.pointId}=${xPos}` },
       { id: `y_${this.pointId}`, latex: `y_{${this.pointId}}=\\frac{1}{2}(\\sqrt{(a_{1}x_{${this.pointId}}+a_{3})^{2}+4(a_{2}x_{${this.pointId}}^{2}+a_{4}x_{${this.pointId}}+a_{6}+x_{${this.pointId}}^{3})}-a_{3}-a_{1}x_{${this.pointId}})` },
+      { id: `y_{n${this.pointId}}`, latex: `y_{n${this.pointId}}=\\frac{1}{2}(-\\sqrt{(a_{1}x_{${this.pointId}}+a_{3})^{2}+4(a_{2}x_{${this.pointId}}^{2}+a_{4}x_{${this.pointId}}+a_{6}+x_{${this.pointId}}^{3})}-a_{3}-a_{1}x_{${this.pointId}})` },
       { id: `point${this.pointId}`, latex: `(x_${this.pointId},y_${this.pointId})` }
     ]);
+    let point = new CurvePoint(xPos,0,this.pointId,this);
+    point.startUpdatingPoint()
+    this.points[this.pointId]= point;
     return this.pointId;
   }
 

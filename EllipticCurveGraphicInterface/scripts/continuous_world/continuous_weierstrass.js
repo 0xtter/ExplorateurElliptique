@@ -333,13 +333,13 @@ class WeierstrassPoint extends Point {
 
 // Y^2 + a1 XY + a3 * Y = X^3 + a2 X^2 + a4 X + a6
 
-// Short weierstrass : y2 = x3 + ax + b
-let a = 2;
-let b = 1;
-let curve = new Weierstrass(0, 0, 0, a, b);
-let P = new WeierstrassPoint(curve, 0, 1);
-let Q = new WeierstrassPoint(curve, 1.98, 3.567);
+// // Short weierstrass : y2 = x3 + ax + b
+// let a = 2;
+// let b = 1;
+// let curve = new Weierstrass(0, 0, 0, a, b);
+// let P = new WeierstrassPoint(curve, 0, 1);
+// let Q = new WeierstrassPoint(curve, 1.98, 3.567);
 
-console.log("P + Q = ", P.add(Q).toString())
-console.log("2P =", P.double().toString());
-console.log("2P =", P.double().toString());
+// console.log("P + Q = ", P.add(Q).toString())
+// console.log("2P =", P.double().toString());
+// console.log("2P =", P.double().toString());
