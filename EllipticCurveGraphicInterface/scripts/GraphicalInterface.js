@@ -28,7 +28,7 @@ class Graphic {
       language: "fr",
       settingsMenu: false,
       showResetButtonOnGraphpaper: true,
-      expressions: false
+      //expressions: false
     });
   }
 
@@ -104,9 +104,9 @@ class RealCurveGraph extends Graphic {
     try {
       this.pointId++;
       this.calculator.setExpressions([
-        { id: `x_${this.pointId}`, latex: `x_${this.pointId}=${P[0]}`,secret:true },
-        { id: `y_${this.pointId}`, latex: `y_${this.pointId}=${P[1]}`,secret:true },
-        { id: `point${this.pointId}`, latex: `(x_${this.pointId},y_${this.pointId})`, showLabel: true, dragMode: Axis ,secret:true }
+        { id: `x_${this.pointId}`, latex: `x_${this.pointId}=${P[0]}` },
+        { id: `y_${this.pointId}`, latex: `y_${this.pointId}=${P[1]}` },
+        { id: `point${this.pointId}`, latex: `(x_${this.pointId},y_${this.pointId})`, showLabel: true, dragMode: Axis  }
       ]);
       
       this.points[this.pointId]=new GraphPoint(P[0],P[1],this.pointId,this);
@@ -152,7 +152,7 @@ class RealCurveGraph extends Graphic {
 
     try {
       this.lineId++;
-      this.calculator.setExpression({ id: `line${this.lineId}`, latex: `y = ${gradient}*x + ${b}`,secret:true });
+      this.calculator.setExpression({ id: `line${this.lineId}`, latex: `y = ${gradient}*x + ${b}` }); //Ajouter la ligne au dictionnaire
       return this.lineId;
     } catch (error) {
       throw new Error(`An error has occured creating the line : ${error}`);
@@ -245,9 +245,9 @@ class WeierstrassGraph extends RealCurveGraph {
       { id: 'a_3', latex: `a_3=${this.a3}` },
       { id: 'a_4', latex: `a_4=${this.a4}` },
       { id: 'a_6', latex: `a_6=${this.a6}` },
-      { id: 'curve', latex: 'y^2 + a_1 xy + a_3 * y = x^3 + a_2 * x^2 + a_4*x + a_6',secret:true }
+      { id: 'curve', latex: 'y^2 + a_1 xy + a_3 * y = x^3 + a_2 * x^2 + a_4*x + a_6' }
     ]);
-    this.saveGraphicState();
+    // this.saveGraphicState();
   }
   /**
    * add a point on the curve giving his x position on the graph
@@ -257,15 +257,14 @@ class WeierstrassGraph extends RealCurveGraph {
   addCurvePoint(xPos) {
     this.pointId++;
     this.calculator.setExpressions([
-      { id: `x_${this.pointId}`, latex: `x_${this.pointId}=${xPos}`,secret:true },
-      { id: `y_${this.pointId}`, latex: `y_{${this.pointId}}=\\frac{1}{2}(\\sqrt{(a_{1}x_{${this.pointId}}+a_{3})^{2}+4(a_{2}x_{${this.pointId}}^{2}+a_{4}x_{${this.pointId}}+a_{6}+x_{${this.pointId}}^{3})}-a_{3}-a_{1}x_{${this.pointId}})`,secret:true },
-      { id: `y_{n${this.pointId}}`, latex: `y_{n${this.pointId}}=\\frac{1}{2}(-\\sqrt{(a_{1}x_{${this.pointId}}+a_{3})^{2}+4(a_{2}x_{${this.pointId}}^{2}+a_{4}x_{${this.pointId}}+a_{6}+x_{${this.pointId}}^{3})}-a_{3}-a_{1}x_{${this.pointId}})`,secret:true },
-      { id: `point${this.pointId}`, latex: `(x_${this.pointId},y_${this.pointId})`,secret:true }
+      { id: `x_${this.pointId}`, latex: `x_${this.pointId}=${xPos}` },
+      { id: `y_${this.pointId}`, latex: `y_{${this.pointId}}=\\frac{1}{2}(\\sqrt{(a_{1}x_{${this.pointId}}+a_{3})^{2}+4(a_{2}x_{${this.pointId}}^{2}+a_{4}x_{${this.pointId}}+a_{6}+x_{${this.pointId}}^{3})}-a_{3}-a_{1}x_{${this.pointId}})` },
+      { id: `y_{n${this.pointId}}`, latex: `y_{n${this.pointId}}=\\frac{1}{2}(-\\sqrt{(a_{1}x_{${this.pointId}}+a_{3})^{2}+4(a_{2}x_{${this.pointId}}^{2}+a_{4}x_{${this.pointId}}+a_{6}+x_{${this.pointId}}^{3})}-a_{3}-a_{1}x_{${this.pointId}})` },
+      { id: `point${this.pointId}`, latex: `(x_${this.pointId},y_${this.pointId})` }
     ]);
-    let point = new CurvePoint(xPos,0,this.pointId,this);
+    let point = new GraphPoint(xPos,0,this.pointId,this);
     point.startUpdatingPoint()
     this.points[this.pointId]= point;
     return this.pointId;
   }
-
 }

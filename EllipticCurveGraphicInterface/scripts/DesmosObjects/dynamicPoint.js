@@ -13,12 +13,12 @@ class GraphPoint {
 
         this.H[0].observe('numericValue', (function () {
             that.x = that.H[0].numericValue;
-            // that.executeOnUpdate(that,this.graph);
+            that.executeOnUpdate(that,this.graph);
         }))
 
         this.H[1].observe('numericValue', (function () {
             that.y = that.H[1].numericValue;
-            // that.executeOnUpdate(that,this.graph);
+            that.executeOnUpdate(that,this.graph);
         }))
 
     }
@@ -47,7 +47,6 @@ class CurvePoint extends GraphPoint{
         }))
 
         this.H[1].observe('numericValue', (function () {
-            
             that.y = that.H[1].numericValue;
             // var calculatorRect = that.graph.element.getBoundingClientRect();
             // that.graph.element.addEventListener('mousemove', function (evt) {
