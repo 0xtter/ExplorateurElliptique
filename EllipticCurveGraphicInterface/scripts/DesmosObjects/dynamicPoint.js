@@ -5,6 +5,7 @@ class GraphPoint {
         this.graph = graph
         this.H = [this.graph.calculator.HelperExpression({ latex: `x_${id}` }), this.graph.calculator.HelperExpression({ latex: `y_${id}` })];
         this.id = id;
+        this.onUpdate =[];
     }
 
     startUpdatingPoint() {
@@ -12,17 +13,23 @@ class GraphPoint {
 
         this.H[0].observe('numericValue', (function () {
             that.x = that.H[0].numericValue;
-
+            // that.executeOnUpdate(that,this.graph);
         }))
 
         this.H[1].observe('numericValue', (function () {
             that.y = that.H[1].numericValue;
+            // that.executeOnUpdate(that,this.graph);
         }))
+
     }
 
     stopUpdatingLine() {
         this.H[0].unobserve('numericValue');
         this.H[1].unobserve('numericValue');
+    }
+
+    executeOnUpdate(that){
+        this.onUpdate.forEach(element => element(that))
     }
 }
 
@@ -37,35 +44,32 @@ class CurvePoint extends GraphPoint{
 
         this.H[0].observe('numericValue', (function () {
             that.x = that.H[0].numericValue;
-
-
-
         }))
 
         this.H[1].observe('numericValue', (function () {
-
-            //that.y = that.H[1].numericValue;
-            var calculatorRect = that.graph.element.getBoundingClientRect();
-            that.graph.element.addEventListener('mousemove', function (evt) {
-                var pos = that.graph.calculator.pixelsToMath({
-                    x: evt.clientX - calculatorRect.left,
-                    y: evt.clientY - calculatorRect.top
-                });
-                var positiveDistance = Math.sqrt((pos.x-that.x)**2 + (pos.y-that.H[1].numericValue)**2)
-                var negativeDistance = Math.sqrt((pos.x-that.x)**2 + (pos.y-that.HY.numericValue)**2)
+            
+            that.y = that.H[1].numericValue;
+            // var calculatorRect = that.graph.element.getBoundingClientRect();
+            // that.graph.element.addEventListener('mousemove', function (evt) {
+            //     var pos = that.graph.calculator.pixelsToMath({
+            //         x: evt.clientX - calculatorRect.left,
+            //         y: evt.clientY - calculatorRect.top
+            //     });
+            //     var positiveDistance = Math.sqrt((pos.x-that.x)**2 + (pos.y-that.H[1].numericValue)**2)
+            //     var negativeDistance = Math.sqrt((pos.x-that.x)**2 + (pos.y-that.HY.numericValue)**2)
                 
-                if (positiveDistance<=negativeDistance){
-                    that.y = that.H[1].numericValue;
-                    that.graph.calculator.setExpression({ id: `point${that.id}`, latex: `(x_${that.id},y_${that.id})`});
-                }
-                else{
-                    that.y = that.HY.numericValue;
-                    that.graph.calculator.setExpression({ id: `point${that.id}`, latex: `(x_${that.id},y_{n${that.id}})`});
-                    return
-                }
+            //     if (positiveDistance<=negativeDistance){
+            //         that.y = that.H[1].numericValue;
+            //         that.graph.calculator.setExpression({ id: `point${that.id}`, latex: `(x_${that.id},y_${that.id})`});
+            //     }
+            //     else{
+            //         that.y = that.HY.numericValue;
+            //         that.graph.calculator.setExpression({ id: `point${that.id}`, latex: `(x_${that.id},y_{n${that.id}})`});
+            //         return
+            //     }
                 
-            }, { once: true });
-            console.log(that)
+            // }, { once: true });
+            // console.log(that)
         }))
     }
 
