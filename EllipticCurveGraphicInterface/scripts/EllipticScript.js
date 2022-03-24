@@ -26,4 +26,5 @@ function main() {
         console.log(graph1)
         
     };
+    console.log(444);
 }
