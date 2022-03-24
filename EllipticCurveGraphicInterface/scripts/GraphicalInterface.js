@@ -189,10 +189,10 @@ class RealCurveGraph extends Graphic {
    * @param {number} id - The line's id 
    */
   removeDynamicLine(id) {
-    var line = this.lines[id-1];
-    line.P[1].unobserve('numericValue');
-    line.Q[1].unobserve('numericValue');
-    this.calculator.removeExpression({id: `line${id}`});
+    // var line = this.lines[id-1];
+    // line.P[1].unobserve('numericValue');
+    // line.Q[1].unobserve('numericValue');
+    // this.calculator.removeExpression({id: `line${id}`});
   }
 
 
@@ -204,9 +204,9 @@ class RealCurveGraph extends Graphic {
    */
   addDynamicLine(P, Q) {
     this.addLine(1, 1);
-    var dynamicLine = new DynamicLine(P, Q, this.lineId, this)
-    dynamicLine.startUpdatingLine(this)
-    this.lines[this.lineId]= dynamicLine;
+    // var dynamicLine = new DynamicLine(P, Q, this.lineId, this)
+    // dynamicLine.startUpdatingLine(this)
+    // this.lines[this.lineId]= dynamicLine;
     return this.lineId;
   }
 
