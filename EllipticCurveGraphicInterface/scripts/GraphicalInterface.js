@@ -28,6 +28,9 @@ class Graphic {
       language: "fr",
       settingsMenu: false,
       showResetButtonOnGraphpaper: true,
+      settingsMenu:false,
+      border:false,
+      expressionsCollapsed:true,
       //expressions: false
     });
   }
@@ -152,7 +155,7 @@ class RealCurveGraph extends Graphic {
 
     try {
       this.lineId++;
-      this.calculator.setExpression({ id: `line${this.lineId}`, latex: `y = ${gradient}*x + ${b}` }); //Ajouter la ligne au dictionnaire
+      this.calculator.setExpression({ id: `line${this.lineId}`, latex: `y = ${gradient}*x + ${b}` });
       return this.lineId;
     } catch (error) {
       throw new Error(`An error has occured creating the line : ${error}`);
