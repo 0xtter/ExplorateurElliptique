@@ -179,7 +179,8 @@ class RealCurveGraph extends Graphic {
     super(element);
     //this.pointId = 0;
     //this.points = {};
-    this.lineId = 0;
+    //this.lineId = 0;
+    super(this.lineId);
     //this.lines = {};
   }
 
