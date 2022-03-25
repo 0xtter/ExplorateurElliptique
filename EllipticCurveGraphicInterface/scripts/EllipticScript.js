@@ -8,14 +8,8 @@ function main() {
     console.log(graph1.addCurvePoint(1));
     console.log(graph1.addCurvePoint(2));
     console.log(graph1.addDraggablePoint([2,2],'XY'));
-    
-    graph1.saveGraphicState();
-
-    p1 = new GraphPoint(0,0,3,graph1)
-    console.log(p1.x)
-    p1.startUpdatingPoint(graph1.calculator);   
+    console.log(graph1.points['3']);//.startUpdatingPoint(graph1.calculator);   
     graph1.addDynamicLine(graph1.points["1"],graph1.points["2"]);
-    console.log(graph1.getExpressionById('a_1'))
     
     
     document.getElementById('button1').onclick = function () {

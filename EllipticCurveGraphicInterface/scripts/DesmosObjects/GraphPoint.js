@@ -23,7 +23,7 @@ class GraphPoint {
 
     }
 
-    stopUpdatingLine() {
+    stopUpdatingPoint() {
         this.H[0].unobserve('numericValue');
         this.H[1].unobserve('numericValue');
     }

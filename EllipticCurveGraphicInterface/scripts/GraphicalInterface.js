@@ -12,6 +12,7 @@ class Graphic {
       throw error;
     }
     this.calculator = Desmos.GraphingCalculator(this.element);
+    this.setup();
   }
 
   get getElement() {
@@ -61,7 +62,6 @@ class RealCurveGraph extends Graphic {
     this.points = {};
     this.lineId = 0;
     this.lines = {};
-    super.setup();
   }
 
   /**
@@ -113,6 +113,7 @@ class RealCurveGraph extends Graphic {
       ]);
       
       this.points[this.pointId]=new GraphPoint(P[0],P[1],this.pointId,this);
+      
       return this.pointId;
     } catch (error) {
       throw new Error(`An error has occured creating the point : ${error}`);
@@ -155,7 +156,13 @@ class RealCurveGraph extends Graphic {
 
     try {
       this.lineId++;
-      this.calculator.setExpression({ id: `line${this.lineId}`, latex: `y = ${gradient}*x + ${b}` });
+      this.calculator.setExpressions([
+        { id: `grad_${this.lineId}`, latex: `grad_${this.lineId}=${gradient}` },
+        { id: `b_${this.lineId}`, latex: `b_${this.lineId}=${b}` },
+        { id: `line${this.lineId}`, latex: `y = grad_${this.lineId}*x + b_${this.lineId}`,showLabel:true }
+      ]);
+      
+      this.lines[this.lineId]=new GraphLine(gradient,b,this.lineId,this);
       return this.lineId;
     } catch (error) {
       throw new Error(`An error has occured creating the line : ${error}`);
