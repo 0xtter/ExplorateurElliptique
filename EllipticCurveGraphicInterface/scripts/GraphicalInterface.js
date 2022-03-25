@@ -13,6 +13,11 @@ class Graphic {
     }
     this.calculator = Desmos.GraphingCalculator(this.element);
     this.setup();
+    
+    this.pointId = 0;
+    this.points = {};
+    this.lineId = 0;
+    this.lines = {};
   }
 
   get getElement() {
@@ -47,55 +52,13 @@ class Graphic {
   getExpressionById(id) {
     return this.calculator.getExpressions().find(element => element.id == id)
   }
-}
 
-/** Class representing a real elliptic curve.*/
-class RealCurveGraph extends Graphic {
   /**
-  * Represents a graphic calculator.
-  * @constructor
-  * @param {string} element - The ID of the HTML element where the calculator will be.
+  * add a draggable point on the graph giving his coordinates
+  * 
+  * @param {array} P - The point coordinates as an array 
+  * @return {number} return the id of the point created.
   */
-  constructor(element) {
-    super(element);
-    this.pointId = 0;
-    this.points = {};
-    this.lineId = 0;
-    this.lines = {};
-  }
-
-  /**
-   * show the curve on the graph
-   */
-  showCurve() {
-    throw new Error('You have to implement the method showCurve for this curve!');
-  }
-
-  /**
-   * add a point on the curve giving his x position on the graph
-   * @param {number} xPos - The point X coordinate 
-   * @return {number} return the id of the point created.
-   */
-  addCurvePoint(xPos) {
-    throw new Error('You have to implement the method addCurvePoint for this curve!');
-  }
-
-  /**
-   * add a static point (not draggable) on the graph giving his coordinates
-   * 
-   * @param {array} P - The point coordinates as an array 
-   * @return {number} return the id of the point created.
-   */
-  addStaticPoint(P) {
-    return this.addDraggablePoint(P, 'NONE');
-  }
-
-  /**
-   * add a draggable point on the graph giving his coordinates
-   * 
-   * @param {array} P - The point coordinates as an array 
-   * @return {number} return the id of the point created.
-   */
   addDraggablePoint(P, Axis) {
     if (!Array.isArray(P)) {
       throw new Error("Wrong Inputs. 'P' must be an array");
@@ -103,7 +66,7 @@ class RealCurveGraph extends Graphic {
     else if (Axis != 'X' && Axis != 'Y' && Axis != 'XY' && Axis != 'NONE') {
       throw new Error("Wrong Inputs. 'Axis' must be either 'X','Y', 'XY' or 'NONE'");
     }
-
+  
     try {
       this.pointId++;
       this.calculator.setExpressions([
@@ -111,14 +74,24 @@ class RealCurveGraph extends Graphic {
         { id: `y_${this.pointId}`, latex: `y_${this.pointId}=${P[1]}` },
         { id: `point${this.pointId}`, latex: `(x_${this.pointId},y_${this.pointId})`, showLabel: true, dragMode: Axis  }
       ]);
-      
+        
       this.points[this.pointId]=new GraphPoint(P[0],P[1],this.pointId,this);
-      
+        
       return this.pointId;
     } catch (error) {
       throw new Error(`An error has occured creating the point : ${error}`);
     }
   }
+
+  /**
+  * add a static point (not draggable) on the graph giving his coordinates
+  * 
+  * @param {array} P - The point coordinates as an array 
+  * @return {number} return the id of the point created.
+  */
+  addStaticPoint(P) {
+    return this.addDraggablePoint(P, 'NONE');
+  }  
 
   /**
    * update a point position on the graph giving his id and his new coordinates
@@ -141,6 +114,91 @@ class RealCurveGraph extends Graphic {
       throw new Error(`Point ${id} not found : ${error}`);
     }
   }
+
+    /**
+   * add a straight line on the graph giving : gradient, b of the equation Y = gradient * X + b
+   * 
+   * @param {number} gradient - The gradiant of the equation Y = gradient * X + b 
+   * @param {number} b - The b of the equation Y = gradient * X + b 
+   * @return {number} return the id of the line created.
+   */
+    addLine(gradient, b) {
+      if (typeof gradient != "number" || typeof b != "number") {
+        throw new Error("'grandiant' and 'b' must be numbers");
+      }
+  
+      try {
+        this.lineId++;
+        this.calculator.setExpressions([
+          { id: `grad_${this.lineId}`, latex: `grad_${this.lineId}=${gradient}` },
+          { id: `b_${this.lineId}`, latex: `b_${this.lineId}=${b}` },
+          { id: `line${this.lineId}`, latex: `y = grad_${this.lineId}*x + b_${this.lineId}`,showLabel:true }
+        ]);
+        
+        this.lines[this.lineId]=new GraphLine(gradient,b,this.lineId,this);
+        return this.lineId;
+      } catch (error) {
+        throw new Error(`An error has occured creating the line : ${error}`);
+      }
+    }
+  
+    /**
+     * update a lin position on the graph giving his id and his new coordinates
+     * 
+     * @param {number} id - The id of the line to update
+     * @param {array} newP - The new point coordinates as an array
+     */
+    updateLine(id, newGradient, newB) {
+      if (typeof id != "number" || typeof newGradient != "number" || typeof newB != "number") {
+        throw new Error("Wrong Inputs. 'id', 'newline' and 'b' must be numbers");
+      }
+  
+      if (id > this.lineId) {
+        throw new Error(`Selected line : ${id} do not exist. Number of lines : ${this.lineId}`);
+      }
+  
+      try {
+        this.calculator.setExpression({ id: `line${this.lineId}`, latex: `y = ${newGradient}*x + ${newB}` }); // à revoir le try (set expression ne va pas renvoyer une erreur si point existe pas)
+      } catch (error) {
+        throw new Error(`Line ${id} not found : ${error}`);
+      }
+    }
+
+
+}
+
+/** Class representing a real elliptic curve.*/
+class RealCurveGraph extends Graphic {
+  /**
+  * Represents a graphic calculator.
+  * @constructor
+  * @param {string} element - The ID of the HTML element where the calculator will be.
+  */
+  constructor(element) {
+    super(element);
+    //this.pointId = 0;
+    //this.points = {};
+    //this.lineId = 0;
+    super(this.lineId);
+    //this.lines = {};
+  }
+
+  /**
+   * show the curve on the graph
+   */
+  showCurve() {
+    throw new Error('You have to implement the method showCurve for this curve!');
+  }
+
+  /**
+   * add a point on the curve giving his x position on the graph
+   * @param {number} xPos - The point X coordinate 
+   * @return {number} return the id of the point created.
+   */
+  addCurvePoint(xPos) {
+    throw new Error('You have to implement the method addCurvePoint for this curve!');
+  }
+
 
   /**
    * add a straight line on the graph giving : gradient, b of the equation Y = gradient * X + b
