@@ -37,6 +37,7 @@ class Graphic {
       settingsMenu:false,
       border:false,
       expressionsCollapsed:true,
+      // autoResize:true,
       //expressions: false
     });
   }
