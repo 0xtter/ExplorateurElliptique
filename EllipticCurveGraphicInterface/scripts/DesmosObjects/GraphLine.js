@@ -1,16 +1,12 @@
-class GraphLine {
+class GraphLine extends GraphObject{
     constructor(grad, b, id, graph) {
-        this.graph = graph;
+        super(id,graph);
         this.H = [graph.calculator.HelperExpression({ latex: `grad_${id}` }), graph.calculator.HelperExpression({ latex: `b_${id}` })];
         this.grad = grad;
         this.b = b;
-        this.id = id;
-        this.onUpdate =[];
     }
 
     startUpdatingLine() {
-        var eq;
-
         var that = this;
         
         this.HP[1].observe('numericValue', (function () {
