@@ -9,7 +9,7 @@ class GraphObject{
 
     executeOnUpdate(){
         for(let i=0;i<this.onUpdate.length;i++){
-            this.onUpdate[i].apply(6,this.args[i]);
+            this.onUpdate[i].apply(this,this.args[i]);
         }
     }
 
