@@ -54,6 +54,22 @@ class Graphic {
     return this.calculator.getExpressions().find(element => element.id == id)
   }
 
+  // coordonnees_souris(){
+  //   // Find the pixel coordinates of the graphpaper origin:
+  //   this.calculator.mathToPixels({ x: 0, y: 0 });
+
+  //   // Find the math coordinates of the mouse
+  //   var calculatorRect = calculator.getBoundingClientRect();
+  //   document.addEventListener('mousemove', function(evt) {
+  //       console.log(
+  //           calculator.pixelsToMath({
+  //               x: evt.clientX - calculatorRect.left,
+  //               y: evt.clientY - calculatorRect.top
+  //           })
+  //       );
+  //   });
+  // }
+
   /**
   * add a draggable point on the graph giving his coordinates
   * 
@@ -258,3 +274,25 @@ class WeierstrassGraph extends RealCurveGraph {
     return this.pointId;
   }
 }
+
+/** Class representing a modular elliptic curve.*/
+class ModCurveGraph extends Graphic {
+  /**
+  * Represents a graphic calculator.
+  * @constructor
+  * @param {string} element - The ID of the HTML element where the calculator will be.
+  */
+  constructor(element) {
+    super(element);
+  }
+
+  display_points(list_points){
+    var that = this;
+    list_points.forEach(function(item) {
+        that.addStaticPoint(item);
+    });
+  }
+
+
+
+}  
