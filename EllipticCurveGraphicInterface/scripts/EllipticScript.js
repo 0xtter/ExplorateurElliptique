@@ -8,6 +8,8 @@ function main() {
     graph1.addDraggablePoint([3,2],'XY');
     graph1.addLine(1,1);
     graph1.lines['1'].linkLineToPoints(graph1.points['1'],graph1.points['2']);
+    graph1.addLine(2,1);
+    graph1.lines['2'].linkLineToPoints(graph1.points['3'],graph1.points['2']);
     
     document.getElementById('button1').onclick = function () {
         graph1.loadGraphicState();
