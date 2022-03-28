@@ -132,9 +132,9 @@ class Graphic {
     try {
       this.lineId++;
       this.calculator.setExpressions([
-        { id: `grad_${this.lineId}`, latex: `g_${this.lineId}=${gradient}` },
+        { id: `g_${this.lineId}`, latex: `g_${this.lineId}=${gradient}` },
         { id: `b_${this.lineId}`, latex: `b_${this.lineId}=${b}` },
-        { id: `line${this.lineId}`, latex: `y = g_${this.lineId}*x + b_${this.lineId}`, showLabel: true }
+        { id: `line${this.lineId}`, latex: `y_{l${this.lineId}} = g_${this.lineId}*x + b_${this.lineId}`, showLabel: true }
       ]);
       let line = new GraphLine(gradient, b, this.lineId, this);
       line.startUpdatingLine()
@@ -161,7 +161,10 @@ class Graphic {
     }
 
     try {
-      this.calculator.setExpression({ id: `line${this.lineId}`, latex: `y = ${newGradient}*x + ${newB}` }); // à revoir le try (set expression ne va pas renvoyer une erreur si point existe pas)
+      this.calculator.setExpressions([
+        { id: `g_${id}`, latex: `g_${id}=${newGradient}` },
+        { id: `b_${id}`, latex: `b_${id}=${newB}` }
+      ]);
     } catch (error) {
       throw new Error(`Line ${id} not found : ${error}`);
     }
