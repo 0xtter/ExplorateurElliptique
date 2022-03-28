@@ -37,7 +37,7 @@ class Graphic {
       settingsMenu: false,
       border: false,
       expressionsCollapsed: true,
-      // autoResize:true,
+      //autoResize:true,
       //expressions: false
     });
   }
@@ -71,9 +71,9 @@ class Graphic {
     try {
       this.pointId++;
       this.calculator.setExpressions([
-        { id: `x_${this.pointId}`, latex: `x_${this.pointId}=${P[0]}` },
-        { id: `y_${this.pointId}`, latex: `y_${this.pointId}=${P[1]}` },
-        { id: `point${this.pointId}`, latex: `(x_${this.pointId},y_${this.pointId})`, showLabel: true, dragMode: Axis }
+        { id: `x_${this.pointId}`, latex: `x_{${this.pointId}}=${P[0]}` },
+        { id: `y_${this.pointId}`, latex: `y_{${this.pointId}}=${P[1]}` },
+        { id: `point${this.pointId}`, latex: `(x_{${this.pointId}},y_{${this.pointId}})`, showLabel: true, dragMode: Axis }
       ]);
       let point = new GraphPoint(P[0], P[1], this.pointId, this);
       point.startUpdatingPoint();
@@ -117,7 +117,7 @@ class Graphic {
     }
   }
 
-  /**
+/**
  * add a straight line on the graph giving : gradient, b of the equation Y = gradient * X + b
  * 
  * @param {number} gradient - The gradiant of the equation Y = gradient * X + b 
@@ -132,9 +132,9 @@ class Graphic {
     try {
       this.lineId++;
       this.calculator.setExpressions([
-        { id: `g_${this.lineId}`, latex: `g_${this.lineId}=${gradient}` },
-        { id: `b_${this.lineId}`, latex: `b_${this.lineId}=${b}` },
-        { id: `line${this.lineId}`, latex: `y_{l${this.lineId}} = g_${this.lineId}*x + b_${this.lineId}`, showLabel: true }
+        { id: `g_${this.lineId}`, latex: `g_{${this.lineId}}=${gradient}` },
+        { id: `b_${this.lineId}`, latex: `b_{${this.lineId}}=${b}` },
+        { id: `line${this.lineId}`, latex: `y_{l${this.lineId}} = g_{${this.lineId}}*x + b_{${this.lineId}}`, showLabel: true }
       ]);
       let line = new GraphLine(gradient, b, this.lineId, this);
       line.startUpdatingLine()
@@ -162,15 +162,14 @@ class Graphic {
 
     try {
       this.calculator.setExpressions([
-        { id: `g_${id}`, latex: `g_${id}=${newGradient}` },
-        { id: `b_${id}`, latex: `b_${id}=${newB}` }
+        // { id: `g_${id}`, latex: `g_${id}=${newGradient}` },
+        // { id: `b_${id}`, latex: `b_{${id}}=${newB}` },
+        { id: `line${id}`, latex: `y_{l${id}} = ${newGradient}*x + ${newB}`, showLabel: true }
       ]);
     } catch (error) {
       throw new Error(`Line ${id} not found : ${error}`);
     }
   }
-
-
 }
 
 /** Class representing a real elliptic curve.*/
@@ -199,7 +198,11 @@ class RealCurveGraph extends Graphic {
   addCurvePoint(xPos) {
     throw new Error('You have to implement the method addCurvePoint for this curve!');
   }
-
+  
+  showSum(P,Q){
+    lineId = graph1.addLine(1, 1);
+    graph1.lines[`${lineId}`].linkLineToPoints(P, Q);
+  }
 }
 
 /** Class representing a real Weierstrass elliptic curve.*/
@@ -240,7 +243,6 @@ class WeierstrassGraph extends RealCurveGraph {
       { id: 'a_6', latex: `a_6=${this.a6}` },
       { id: 'curve', latex: 'y^2 + a_1 xy + a_3 * y = x^3 + a_2 * x^2 + a_4*x + a_6' }
     ]);
-    // this.saveGraphicState();
   }
   /**
    * add a point on the curve giving his x position on the graph
@@ -250,12 +252,12 @@ class WeierstrassGraph extends RealCurveGraph {
   addCurvePoint(xPos) {
     this.pointId++;
     this.calculator.setExpressions([
-      { id: `x_${this.pointId}`, latex: `x_${this.pointId}=${xPos}` },
+      { id: `x_${this.pointId}`, latex: `x_{${this.pointId}}=${xPos}` },
       { id: `y_${this.pointId}`, latex: `y_{${this.pointId}}=\\frac{1}{2}(\\sqrt{(a_{1}x_{${this.pointId}}+a_{3})^{2}+4(a_{2}x_{${this.pointId}}^{2}+a_{4}x_{${this.pointId}}+a_{6}+x_{${this.pointId}}^{3})}-a_{3}-a_{1}x_{${this.pointId}})` },
-      { id: `y_{n${this.pointId}}`, latex: `y_{n${this.pointId}}=\\frac{1}{2}(-\\sqrt{(a_{1}x_{${this.pointId}}+a_{3})^{2}+4(a_{2}x_{${this.pointId}}^{2}+a_{4}x_{${this.pointId}}+a_{6}+x_{${this.pointId}}^{3})}-a_{3}-a_{1}x_{${this.pointId}})` },
-      { id: `point${this.pointId}`, latex: `(x_${this.pointId},y_${this.pointId})` }
+      //{ id: `y_{n${this.pointId}}`, latex: `y_{n${this.pointId}}=\\frac{1}{2}(-\\sqrt{(a_{1}x_{${this.pointId}}+a_{3})^{2}+4(a_{2}x_{${this.pointId}}^{2}+a_{4}x_{${this.pointId}}+a_{6}+x_{${this.pointId}}^{3})}-a_{3}-a_{1}x_{${this.pointId}})` },
+      { id: `point${this.pointId}`, latex: `(x_{${this.pointId}},y_{${this.pointId}})` }
     ]);
-    let point = new GraphPoint(xPos, 0, this.pointId, this);
+    let point = new WeierstrassGraphPoint(xPos, 0, this.pointId, this);
     point.startUpdatingPoint()
     this.points[this.pointId] = point;
     return this.pointId;

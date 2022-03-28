@@ -3,7 +3,7 @@ class GraphPoint extends GraphObject{
         super(id,graph);
         this.x = x;
         this.y = y;
-        this.H = [this.graph.calculator.HelperExpression({ latex: `x_${id}` }), this.graph.calculator.HelperExpression({ latex: `y_${id}` })];
+        this.H = [this.graph.calculator.HelperExpression({ latex: `x_{${id}}` }), this.graph.calculator.HelperExpression({ latex: `y_{${id}}` })];
     }
 
     startUpdatingPoint() {
@@ -25,6 +25,45 @@ class GraphPoint extends GraphObject{
         this.H[0].unobserve('numericValue');
         this.H[1].unobserve('numericValue');
     }
+    
+    setPointAsSum(P,Q){
+        let pointP = new Point(P.x, P.y);
+        let pointQ = new Point(Q.x, Q.y);
+        console.log(pointP.ad)
+    }
+}
+
+class WeierstrassGraphPoint extends GraphPoint{
+    constructor(x, y, id, graph) {
+        super(x, y, id, graph);
+    }
+
+    setPointAsSum(P,Q){
+        P.addFunctionAtUpdate(function (P, Q) {
+            // let pointP = new WeierstrassPoint(P.x, P.y);
+            // let pointQ = new WeierstrassPoint(Q.x, Q.y);
+            // try {
+            //     let sum = pointP.add(pointQ);
+            //     console.log(sum)
+            //     this.graph.updatePoint(this.id, sum)
+            // } catch (error) {
+            //     console.warn(error)
+            // }
+        }, [P, Q])
+
+        Q.addFunctionAtUpdate(function (P, Q) {
+            // let pointQ = new Point(Q.x, Q.y);
+            // let pointP = new Point(P.x, P.y);
+            // try {
+            //     let sum = pointQ.add(pointP);
+            //     console.log(sum)
+            //     this.graph.updatePoint(this.id, sum)
+            // } catch (error) {
+            //     console.warn(error)
+            // }
+        }, [P, Q])
+    }
+
 }
 
 // class CurvePoint extends GraphPoint{

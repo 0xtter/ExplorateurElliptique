@@ -1,7 +1,7 @@
 class GraphLine extends GraphObject {
     constructor(grad, b, id, graph) {
         super(id, graph);
-        this.H = [graph.calculator.HelperExpression({ latex: `g_${id}` }), graph.calculator.HelperExpression({ latex: `b_${id}` })];
+        this.H = [graph.calculator.HelperExpression({ latex: `g_{${id}}` }), graph.calculator.HelperExpression({ latex: `b_{${id}}` })];
         this.grad = grad;
         this.b = b;
     }
@@ -25,6 +25,8 @@ class GraphLine extends GraphObject {
             let pointQ = new Point(Q.x, Q.y);
             try {
                 let eq = pointP.lineEqCoeffWithPoint(pointQ);
+                line.b = eq[1]
+                line.grad = eq[0]
                 line.graph.updateLine(line.id, eq[0], eq[1]);
             } catch (error) {
                 console.warn(error)
@@ -36,6 +38,8 @@ class GraphLine extends GraphObject {
             let pointP = new Point(P.x, P.y);
             try {
                 let eq = pointQ.lineEqCoeffWithPoint(pointP);
+                line.b = eq[1]
+                line.grad = eq[0]
                 line.graph.updateLine(line.id, eq[0], eq[1]);
             } catch (error) {
                 console.warn(error)
