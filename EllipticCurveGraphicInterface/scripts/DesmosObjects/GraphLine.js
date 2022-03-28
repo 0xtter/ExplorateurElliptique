@@ -1,42 +1,52 @@
-class GraphLine extends GraphObject{
+class GraphLine extends GraphObject {
     constructor(grad, b, id, graph) {
-        super(id,graph);
-        this.H = [graph.calculator.HelperExpression({ latex: `grad_${id}` }), graph.calculator.HelperExpression({ latex: `b_${id}` })];
+        super(id, graph);
+        this.H = [graph.calculator.HelperExpression({ latex: `g_${id}` }), graph.calculator.HelperExpression({ latex: `b_${id}` })];
         this.grad = grad;
         this.b = b;
     }
 
     startUpdatingLine() {
         var that = this;
-        
-        this.HP[1].observe('numericValue', (function () {
-            
+
+        this.H[0].observe('numericValue', (function () {
             that.grad = that.H[0].numericValue;
-            that.executeOnUpdate(that,this.graph);
-            // try{
-            //     eq = that.pointP.lineEqCoeffWithPoint(that.pointQ);
-            // }catch(error){
-            //     console.log(error)
-            // }
-            // calculator.updateLine(that.id, eq[0], eq[1])
+            that.executeOnUpdate(that, this.graph);
         }))
-        this.HQ[1].observe('numericValue', (function () {
+        this.H[1].observe('numericValue', (function () {
             that.b = that.H[0].numericValue;
-            that.executeOnUpdate(that,this.graph);
-            // try{
-            //     eq = that.pointQ.lineEqCoeffWithPoint(that.pointP);
-            // }catch(error){
-            //     console.log(error)
-            // }
-            // calculator.updateLine(that.id, eq[0], eq[1])
+            that.executeOnUpdate(that, this.graph);
         }))
     }
 
-    stopUpdatingLine(){
+    linkLineToPoints(P, Q) {
+        P.addFunctionAtUpdate(function (Q, line) {
+            let pointP = new Point(this.x, this.y);
+            let pointQ = new Point(Q.x, Q.y);
+            try {
+                let eq = pointP.lineEqCoeffWithPoint(pointQ);
+                line.graph.updateLine(line.id, eq[0], eq[1]);
+            } catch (error) {
+                console.warn(error)
+            }
+        }, [Q, this])
+
+        Q.addFunctionAtUpdate(function (P, line) {
+            let pointQ = new Point(this.x, this.y);
+            let pointP = new Point(P.x, P.y);
+            try {
+                let eq = pointQ.lineEqCoeffWithPoint(pointP);
+                line.graph.updateLine(line.id, eq[0], eq[1]);
+            } catch (error) {
+                console.warn(error)
+            }
+        }, [P, this])
+    }
+
+
+
+    stopUpdatingLine() {
         this.H[0].unobserve('numericValue');
         this.H[1].unobserve('numericValue');
-    }
-    executeOnUpdate(that){
-        this.onUpdate.forEach(element => element(that))
     }
 }

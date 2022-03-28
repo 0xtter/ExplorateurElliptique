@@ -25,11 +25,6 @@ class GraphPoint extends GraphObject{
         this.H[0].unobserve('numericValue');
         this.H[1].unobserve('numericValue');
     }
-
-    executeOnUpdate(that){
-        console.log(12)
-        this.onUpdate.forEach(element => element(that))
-    }
 }
 
 // class CurvePoint extends GraphPoint{

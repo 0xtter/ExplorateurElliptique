@@ -4,9 +4,17 @@ class GraphObject{
         this.H;
         this.id = id;
         this.onUpdate =[];
+        this.args= [];
     }
 
-    executeOnUpdate(that){
-        this.onUpdate.forEach(element => element(that))
+    executeOnUpdate(){
+        for(let i=0;i<this.onUpdate.length;i++){
+            this.onUpdate[i].apply(6,this.args[i]);
+        }
+    }
+
+    addFunctionAtUpdate(funct,args){
+        this.onUpdate.push(funct);
+        this.args.push(args);
     }
 }
