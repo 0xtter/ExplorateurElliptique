@@ -39,28 +39,29 @@ class WeierstrassGraphPoint extends GraphPoint{
     }
 
     setPointAsSum(P,Q){
+        var that = this;
         P.addFunctionAtUpdate(function (P, Q) {
-            // let pointP = new WeierstrassPoint(P.x, P.y);
-            // let pointQ = new WeierstrassPoint(Q.x, Q.y);
-            // try {
-            //     let sum = pointP.add(pointQ);
-            //     console.log(sum)
-            //     this.graph.updatePoint(this.id, sum)
-            // } catch (error) {
-            //     console.warn(error)
-            // }
+            let pointP = new WeierstrassPoint(new Weierstrass(2, -6, 0, 1, 2),P.x, P.y);
+            let pointQ = new WeierstrassPoint(new Weierstrass(2, -6, 0, 1, 2),Q.x, Q.y);
+            try {
+                let sum = pointP.add(pointQ);
+                console.log(sum)
+                this.graph.updatePoint(that.id, [sum.x,sum.y])
+            } catch (error) {
+                console.warn(error)
+            }
         }, [P, Q])
 
         Q.addFunctionAtUpdate(function (P, Q) {
-            // let pointQ = new Point(Q.x, Q.y);
-            // let pointP = new Point(P.x, P.y);
-            // try {
-            //     let sum = pointQ.add(pointP);
-            //     console.log(sum)
-            //     this.graph.updatePoint(this.id, sum)
-            // } catch (error) {
-            //     console.warn(error)
-            // }
+            let pointP = new WeierstrassPoint(new Weierstrass(2, -6, 0, 1, 2),P.x, P.y);
+            let pointQ = new WeierstrassPoint(new Weierstrass(2, -6, 0, 1, 2),Q.x, Q.y);
+            try {
+                let sum = pointQ.add(pointP);
+                console.log(sum)
+                this.graph.updatePoint(that.id, [sum.x,sum.y])
+            } catch (error) {
+                console.warn(error)
+            }
         }, [P, Q])
     }
 

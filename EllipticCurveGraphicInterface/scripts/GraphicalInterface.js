@@ -54,22 +54,6 @@ class Graphic {
     return this.calculator.getExpressions().find(element => element.id == id)
   }
 
-  // coordonnees_souris(){
-  //   // Find the pixel coordinates of the graphpaper origin:
-  //   this.calculator.mathToPixels({ x: 0, y: 0 });
-
-  //   // Find the math coordinates of the mouse
-  //   var calculatorRect = calculator.getBoundingClientRect();
-  //   document.addEventListener('mousemove', function(evt) {
-  //       console.log(
-  //           calculator.pixelsToMath({
-  //               x: evt.clientX - calculatorRect.left,
-  //               y: evt.clientY - calculatorRect.top
-  //           })
-  //       );
-  //   });
-  // }
-
   /**
   * add a draggable point on the graph giving his coordinates
   * 
@@ -133,13 +117,13 @@ class Graphic {
     }
   }
 
-/**
- * add a straight line on the graph giving : gradient, b of the equation Y = gradient * X + b
- * 
- * @param {number} gradient - The gradiant of the equation Y = gradient * X + b 
- * @param {number} b - The b of the equation Y = gradient * X + b 
- * @return {number} return the id of the line created.
- */
+  /**
+   * add a straight line on the graph giving : gradient, b of the equation Y = gradient * X + b
+   * 
+   * @param {number} gradient - The gradiant of the equation Y = gradient * X + b 
+   * @param {number} b - The b of the equation Y = gradient * X + b 
+   * @return {number} return the id of the line created.
+   */
   addLine(gradient, b) {
     if (typeof gradient != "number" || typeof b != "number") {
       throw new Error("'grandiant' and 'b' must be numbers");
@@ -214,8 +198,8 @@ class RealCurveGraph extends Graphic {
   addCurvePoint(xPos) {
     throw new Error('You have to implement the method addCurvePoint for this curve!');
   }
-  
-  showSum(P,Q){
+
+  showSum(P, Q) {
     lineId = graph1.addLine(1, 1);
     graph1.lines[`${lineId}`].linkLineToPoints(P, Q);
   }
@@ -270,7 +254,7 @@ class WeierstrassGraph extends RealCurveGraph {
     this.calculator.setExpressions([
       { id: `x_${this.pointId}`, latex: `x_{${this.pointId}}=${xPos}` },
       { id: `y_${this.pointId}`, latex: `y_{${this.pointId}}=\\frac{1}{2}(\\sqrt{(a_{1}x_{${this.pointId}}+a_{3})^{2}+4(a_{2}x_{${this.pointId}}^{2}+a_{4}x_{${this.pointId}}+a_{6}+x_{${this.pointId}}^{3})}-a_{3}-a_{1}x_{${this.pointId}})` },
-      //{ id: `y_{n${this.pointId}}`, latex: `y_{n${this.pointId}}=\\frac{1}{2}(-\\sqrt{(a_{1}x_{${this.pointId}}+a_{3})^{2}+4(a_{2}x_{${this.pointId}}^{2}+a_{4}x_{${this.pointId}}+a_{6}+x_{${this.pointId}}^{3})}-a_{3}-a_{1}x_{${this.pointId}})` },
+      { id: `y_{n${this.pointId}}`, latex: `y_{n${this.pointId}}=\\frac{1}{2}(-\\sqrt{(a_{1}x_{${this.pointId}}+a_{3})^{2}+4(a_{2}x_{${this.pointId}}^{2}+a_{4}x_{${this.pointId}}+a_{6}+x_{${this.pointId}}^{3})}-a_{3}-a_{1}x_{${this.pointId}})` },
       { id: `point${this.pointId}`, latex: `(x_{${this.pointId}},y_{${this.pointId}})` }
     ]);
     let point = new WeierstrassGraphPoint(xPos, 0, this.pointId, this);
@@ -291,10 +275,10 @@ class ModCurveGraph extends Graphic {
     super(element);
   }
 
-  display_points(list_points){
+  display_points(list_points) {
     var that = this;
-    list_points.forEach(function(item) {
-        that.addStaticPoint(item);
+    list_points.forEach(function (item) {
+      that.addStaticPoint(item);
     });
   }
 

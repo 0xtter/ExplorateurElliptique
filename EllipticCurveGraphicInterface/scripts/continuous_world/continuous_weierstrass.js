@@ -231,11 +231,11 @@ class WeierstrassPoint extends Point {
         }
         super(x, y);
         this.curve = curve;
-        let isOnCurve = curve.isPointOnCurve(this)
-        if (!isOnCurve) {
-            throw "Point is not on the curve.";
-        }
-        this.isOnCurve = isOnCurve;
+        // let isOnCurve = curve.isPointOnCurve(this)
+        // if (!isOnCurve) {
+        //     throw "Point is not on the curve.";
+        // }
+        // this.isOnCurve = isOnCurve;
     }
 
 
@@ -253,7 +253,7 @@ class WeierstrassPoint extends Point {
      * @returns {boolean} true if equals. false otherwise.
      */
     equals(Q) {
-        if (curve.constructor.name != "Weierstrass") {
+        if (this.curve.constructor.name != "Weierstrass") {
             return false;
         }
         return this.x == Q.getX && this.y == GainNode.getY && this.curve == Q.getCurve;
