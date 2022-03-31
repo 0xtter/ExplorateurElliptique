@@ -1,6 +1,6 @@
 var pointColor = "#2d70b3";
 var lineColor = "#000000";
-var segemntColor = "#2d70b3"
+var segemntColor = "#2d70b3";
 
 
 /** Class representing a graphic calculator. */
@@ -39,9 +39,8 @@ class Graphic {
     this.calculator.updateSettings({
       keypad: false,
       language: "fr",
-      settingsMenu: false,
       showResetButtonOnGraphpaper: true,
-      settingsMenu: false,
+      //settingsMenu: false,
       border: false,
       expressionsCollapsed: true,
       autosize: true,
@@ -80,7 +79,7 @@ class Graphic {
       this.calculator.setExpressions([
         { id: `x_{${this.pointId}}`, latex: `x_{${this.pointId}}=${P[0]}` },
         { id: `y_{${this.pointId}}`, latex: `y_{${this.pointId}}=${P[1]}` },
-        { id: `point_{${this.pointId}}`, latex: `(x_{${this.pointId}},y_{${this.pointId}})`, showLabel: true, dragMode: Axis }
+        { id: `p_{${this.pointId}}`, latex: `(x_{${this.pointId}},y_{${this.pointId}})`, showLabel: true, dragMode: Axis }
       ]);
       return this.pointId;
     } catch (error) {
@@ -126,15 +125,21 @@ class Graphic {
   /**
    * Change la valeur d'un paramètre par exemple : x_{i}, y_{i}, a_1, g_{i}, b_{i} etc...
    */
-  setValueOfParameter() {
-    console.log("à implémenter")
+  setValueOfParameter(param, value) {
+    this.calculator.setExpression({ id: `${param}`, latex: `${param}=${value}` })
   }
 
   /**
    * renvoie la valeur d'un paramètre par exemple : x_{i}, y_{i}, a_1, g_{i}, b_{i} etc...
    */
-  getValueOfParameter() {
-    console.log("à implémenter")
+  getValueOfParameter(param) {
+    return this.calculator.model.expressionAnalysis;
+  //   let hE = this.calculator.HelperExpression({id:`${param}`,latex:`${param}`})
+  //   let Value;
+
+  //   hE.observe('numericValue', (function () {
+  //     return JSON.stringify(hE);
+  // }))
   }
 
   /**
@@ -154,7 +159,7 @@ class Graphic {
       this.calculator.setExpressions([
         { id: `g_{${this.lineId}}`, latex: `g_{${this.lineId}}=${gradient}` },
         { id: `b_{${this.lineId}}`, latex: `b_{${this.lineId}}=${b}` },
-        { id: `line_{${this.lineId}}`, latex: `y_{l${this.lineId}} = g_{${this.lineId}}*x + b_{${this.lineId}}`, showLabel: true }
+        { id: `l_{${this.lineId}}`, latex: `y_{l${this.lineId}} = g_{${this.lineId}}*x + b_{${this.lineId}}` }
       ]);
       return this.lineId;
     } catch (error) {
@@ -179,7 +184,7 @@ class Graphic {
       this.calculator.setExpressions([
         { id: `g_{${this.lineId}}`, latex: `g_{${this.lineId}}=\\frac{(y_{${idP}}-y_{${idQ}})}{(x_{${idP}}-x_{${idQ}})}` },
         { id: `b_{${this.lineId}}`, latex: `b_{${this.lineId}}=y_{${idP}}-g_{${this.lineId}}x_{${idP}}` },
-        { id: `line_{${this.lineId}}`, latex: `y_{l${this.lineId}} = g_{${this.lineId}}*x + b_{${this.lineId}}`, color: lineColor }
+        { id: `l_{${this.lineId}}`, latex: `y_{l${this.lineId}} = g_{${this.lineId}}*x + b_{${this.lineId}}`, lineOpacity: 0.3 }
       ]);
       return this.lineId;
     } catch (error) {
@@ -224,7 +229,7 @@ class Graphic {
       throw new Error(`'coordinatesX' and 'coordinatesY' must be arrays. Given : ${typeof coordinatesX} and ${typeof coordinatesY}`)
     }
 
-
+    this.segmentID++;
     this.calculator.setExpression({
       id: `s_{${this.segmentID}}`,
       type: 'table',
@@ -247,6 +252,24 @@ class Graphic {
     });
 
     return this.segmentID;
+  }
+
+  /**
+   * Hide all the lines
+   */
+  hideLines() {
+    for (let id = 1; id <= this.lineId; id++) {
+      this.calculator.setExpression({ id: `l_{${id}}`, hidden: true })
+    }
+  }
+
+  /**
+   * Show all the lines
+   */
+  showLines() {
+    for (let id = 1; id <= this.lineId; id++) {
+      this.calculator.setExpression({ id: `l_{${id}}`, hidden: false })
+    }
   }
 }
 
@@ -275,6 +298,22 @@ class RealCurveGraph extends Graphic {
    */
   addCurvePoint(xPos) {
     throw new Error('You have to implement the method addCurvePoint for this curve!');
+  }
+
+  /**
+   * create a point in the expression list giving his x position, the expression of his y value(positive and negative)
+   * @param {number} xPos - The point X coordinate 
+   * @param {number} yPositiveExpression - The expression of the positive solution of y in latex
+   * @param {number} yNegativeExpression - The expression of the negative solution of y in latex
+   */
+  addCurvePointInExpressions(xPos,yPositiveExpression,yNegativeExpression,){
+    this.calculator.setExpressions([
+      {id: `x_{${this.pointId}}`, latex: `x_${this.pointId}=${xPos}` },
+      {id: `y_{p${this.pointId}}`, latex: `y_{p${this.pointId}}=${yPositiveExpression}` },
+      {id: `y_{n${this.pointId}}`, latex: `y_{n${this.pointId}}=${yNegativeExpression}` },
+      {id: `y_{${this.pointId}}`, latex: `y_{${this.pointId}} = y_{p${this.pointId}}` },
+      {id: `p_{${this.pointId}}`, latex: `p_{${this.pointId}}=(x_{${this.pointId}},y_{${this.pointId}})` }
+    ]);
   }
 }
 
@@ -309,6 +348,7 @@ class WeierstrassGraph extends RealCurveGraph {
    */
   showCurve() {
     this.calculator.setExpressions(JSON.parse(weierestrassGraph));
+    this.saveGraphicState();
   }
 
   /**
@@ -318,12 +358,11 @@ class WeierstrassGraph extends RealCurveGraph {
    */
   addCurvePoint(xPos) {
     this.pointId++;
-    this.calculator.setExpressions([
-      { id: `x_{${this.pointId}}`, latex: `x_{${this.pointId}}=${xPos}` },
-      { id: `y_{${this.pointId}}`, latex: `y_{${this.pointId}}=\\frac{1}{2}(\\sqrt{(a_{1}x_{${this.pointId}}+a_{3})^{2}+4(a_{2}x_{${this.pointId}}^{2}+a_{4}x_{${this.pointId}}+a_{6}+x_{${this.pointId}}^{3})}-a_{3}-a_{1}x_{${this.pointId}})` },
-      { id: `y_{n${this.pointId}}`, latex: `y_{n${this.pointId}}=\\frac{1}{2}(-\\sqrt{(a_{1}x_{${this.pointId}}+a_{3})^{2}+4(a_{2}x_{${this.pointId}}^{2}+a_{4}x_{${this.pointId}}+a_{6}+x_{${this.pointId}}^{3})}-a_{3}-a_{1}x_{${this.pointId}})` },
-      { id: `point_{${this.pointId}}`, latex: `(x_{${this.pointId}},y_{${this.pointId}})` }
-    ]);
+    this.addCurvePointInExpressions(
+      xPos,
+      `\\frac{1}{2}(\\sqrt{(a_{1}x_{${this.pointId}}+a_{3})^{2}+4(a_{2}x_{${this.pointId}}^{2}+a_{4}x_{${this.pointId}}+a_{6}+x_{${this.pointId}}^{3})}-a_{3}-a_{1}x_{${this.pointId}})`,
+      `\\frac{1}{2}(-\\sqrt{(a_{1}x_{${this.pointId}}+a_{3})^{2}+4(a_{2}x_{${this.pointId}}^{2}+a_{4}x_{${this.pointId}}+a_{6}+x_{${this.pointId}}^{3})}-a_{3}-a_{1}x_{${this.pointId}})`
+    );
     return this.pointId;
   }
 
@@ -345,8 +384,56 @@ class WeierstrassGraph extends RealCurveGraph {
       { id: `x_{${this.pointId}}`, latex: `x_{${this.pointId}}=g_{${idL}}^{2}+a_{1}g_{${idL}}-a_{2}-x_{${idP}}-x_{${idQ}}` },
       { id: `y_{${this.pointId}}`, latex: `y_{${this.pointId}}=-a_{1}x_{${this.pointId}}-a_{3}-g_{${idL}}x_{${this.pointId}}+g_{${idL}}x_{${idP}}-y_{${idP}}` },
       { id: `y_{n${this.pointId}}`, latex: `y_{n${this.pointId}}=g_{${idL}}x_{${this.pointId}}-g_{${idL}}x_{${idP}}+y_{${idP}}` },
-      { id: `point_{${this.pointId}}`, latex: `(x_{${this.pointId}},y_{${this.pointId}})`, pointStyle: "OPEN", color: pointColor },
-      { id: `point_{n${this.pointId}}`, latex: `(x_{${this.pointId}},y_{n${this.pointId}})`, pointStyle: "OPEN", color: pointColor }
+      { id: `p_{${this.pointId}}`, latex: `p_{${this.pointId}} = (x_{${this.pointId}},y_{${this.pointId}})`, pointStyle: "POINT", color: pointColor, pointSize: 15 },
+      { id: `p_{n${this.pointId}}`, latex: `p_{${this.pointId}} = (x_{${this.pointId}},y_{n${this.pointId}})`, pointStyle: "OPEN", color: pointColor }
+    ]);
+
+    this.addSegment([`x_{${this.pointId}}`, `x_{${this.pointId}}`], [`y_{${this.pointId}}`, `y_{n${this.pointId}}`]);
+    return this.pointId, this.lineId, this.segmentID;
+  }
+
+    
+  /**
+   * shows the tangent at the point P
+   *
+   * @param {number} idP - The id of the point 
+   * @return {number} return the id of the line created
+   **/
+  addTangent(idP) {
+    this.lineId++;
+
+    this.calculator.setExpressions([
+      { id: `x_{${this.pointId}}`, latex: `x_{${this.pointId}}=g_{${idL}}^{2}+a_{1}g_{${idL}}-a_{2}-x_{${idP}}-x_{${idQ}}` },
+      { id: `y_{${this.pointId}}`, latex: `y_{${this.pointId}}=-a_{1}x_{${this.pointId}}-a_{3}-g_{${idL}}x_{${this.pointId}}+g_{${idL}}x_{${idP}}-y_{${idP}}` },
+      { id: `y_{n${this.pointId}}`, latex: `y_{n${this.pointId}}=g_{${idL}}x_{${this.pointId}}-g_{${idL}}x_{${idP}}+y_{${idP}}` },
+      { id: `p_{${this.pointId}}`, latex: `p_{${this.pointId}} = (x_{${this.pointId}},y_{${this.pointId}})`, pointStyle: "POINT", color: pointColor, pointSize: 15 },
+      { id: `p_{n${this.pointId}}`, latex: `p_{${this.pointId}} = (x_{${this.pointId}},y_{n${this.pointId}})`, pointStyle: "OPEN", color: pointColor }
+    ]);
+
+    this.addSegment([`x_{${this.pointId}}`, `x_{${this.pointId}}`], [`y_{${this.pointId}}`, `y_{n${this.pointId}}`]);
+    return this.pointId, this.lineId, this.segmentID;
+  }
+
+  /**
+   * shows the addition of two point given their id
+   *
+   * @param {number} idP - The id of the first point 
+   * @param {number} idQ - The id of the second point  
+   * @return {number} return the id of the point created
+   * @return {number} return the id of line created 
+   * @return {number} return the id of the segment created
+   **/
+   showDoublingPoint(idP, idQ) {
+    this.pointId++;
+
+    let idL = this.addLineBetweenTwoPoints(idP, idQ);
+
+    this.calculator.setExpressions([
+      { id: `x_{${this.pointId}}`, latex: `x_{${this.pointId}}=g_{${idL}}^{2}+a_{1}g_{${idL}}-a_{2}-x_{${idP}}-x_{${idQ}}` },
+      { id: `y_{${this.pointId}}`, latex: `y_{${this.pointId}}=-a_{1}x_{${this.pointId}}-a_{3}-g_{${idL}}x_{${this.pointId}}+g_{${idL}}x_{${idP}}-y_{${idP}}` },
+      { id: `y_{n${this.pointId}}`, latex: `y_{n${this.pointId}}=g_{${idL}}x_{${this.pointId}}-g_{${idL}}x_{${idP}}+y_{${idP}}` },
+      { id: `p_{${this.pointId}}`, latex: `p_{${this.pointId}} = (x_{${this.pointId}},y_{${this.pointId}})`, pointStyle: "POINT", color: pointColor, pointSize: 15 },
+      { id: `p_{n${this.pointId}}`, latex: `p_{${this.pointId}} = (x_{${this.pointId}},y_{n${this.pointId}})`, pointStyle: "OPEN", color: pointColor }
     ]);
 
     this.addSegment([`x_{${this.pointId}}`, `x_{${this.pointId}}`], [`y_{${this.pointId}}`, `y_{n${this.pointId}}`]);

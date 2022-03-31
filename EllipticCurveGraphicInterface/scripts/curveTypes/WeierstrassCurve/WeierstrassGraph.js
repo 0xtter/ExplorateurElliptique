@@ -1,6 +1,6 @@
 weierestrassGraph = `[
   {
-    "id": "a_1",
+    "id": "a_{1}",
     "type": "expression",
     "latex": "a_1=0",
     "color": "#c74440",
@@ -89,7 +89,7 @@ weierestrassGraph = `[
   {
     "id": "a_{4}",
     "type": "expression",
-    "latex": "a_{4}=1",
+    "latex": "a_{4}=-4",
     "color": "#6042a6",
     "lineStyle": "SOLID",
     "lineWidth": "",
