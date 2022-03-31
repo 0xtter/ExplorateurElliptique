@@ -14,7 +14,7 @@ function main() {
     };
     
     document.getElementById('button2').onclick = function () {
-        // graph1.saveGraphicState();
+        graph1.saveGraphicState();
         console.log(graph1.getValueOfParameter('x_{1}'));
     };    
     
@@ -34,7 +34,7 @@ function main() {
         graph1.addCurvePoint(0);
         graph1.addCurvePoint(2);
         graph1.showAdditionOfPoints(1,2);
-        for(let i=3;i<13;i++){
+        for(let i=3;i<6;i++){
             graph1.showAdditionOfPoints(1,i);
         }
     };
