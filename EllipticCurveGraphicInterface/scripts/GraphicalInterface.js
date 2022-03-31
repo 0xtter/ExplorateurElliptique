@@ -467,8 +467,8 @@ class ModCurveGraph extends Graphic {
     var calculatorRect = this.element.getBoundingClientRect();
     document.addEventListener('click', function(evt) {
         var coordonnees_souris = that.calculator.pixelsToMath({
-            x: evt.clientX - calculatorRect.left,
-            y: evt.clientY - calculatorRect.top
+          x: evt.clientX - calculatorRect.left,
+          y: evt.clientY - calculatorRect.top
         })
         var x = coordonnees_souris.x;
         var y = coordonnees_souris.y;
@@ -481,5 +481,9 @@ class ModCurveGraph extends Graphic {
         });
         
     });
+  }
+
+  stopClickPoints(){
+    document.removeEventListener('click');
   }
 }  
