@@ -296,6 +296,30 @@ class ModCurveGraph extends Graphic {
     });
   }
 
+  display_click_points(list_point){
+    var that = this;
+    // Find the pixel coordinates of the graphpaper origin:
+    that.calculator.mathToPixels({ x: 0, y: 0 });
+    // Find the math coordinates of the mouse
+    var calculatorRect = calculator.getBoundingClientRect();
+    document.addEventListener('click', function(evt) {
+        var coordonnees_souris = that.calculator.pixelsToMath({
+            x: evt.clientX - calculatorRect.left,
+            y: evt.clientY - calculatorRect.top
+        })
+        var x = coordonnees_souris.x;
+        var y = coordonnees_souris.y;
+        var x_arrondi = Math.round(x);
+        var y_arrondi = Math.round(y);
+        list_point.forEach(function(item) {
+            if ((x_arrondi==item[0]) && (y_arrondi==item[1])){
+                console.log([x_arrondi,y_arrondi]) 
+            };
+        });
+        
+    });
+  }
+
 
 
 }  
