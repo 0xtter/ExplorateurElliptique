@@ -1,4 +1,4 @@
-weierestrassGraph = `[
+export const weierestrassGraph = `[
     {
       "id": "a_{1}",
       "type": "expression",
