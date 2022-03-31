@@ -1,5 +1,7 @@
+import { RealCurveGraph } from "../../GraphicalInterface.js";
+
 /** Class representing a real Weierstrass elliptic curve.*/
-class WeierstrassGraph extends RealCurveGraph {
+export class WeierstrassGraph extends RealCurveGraph {
   /**
    * Y^2 + a1 XY + a3 * Y = X^3 + a2 X^2 + a4 X + a6
    * 

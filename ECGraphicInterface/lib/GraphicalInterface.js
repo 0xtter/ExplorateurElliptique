@@ -1,5 +1,8 @@
+import Desmos from 'desmos'
+
+
 /** Class representing a graphic calculator. */
-class Graphic {
+export class Graphic {
   /**
   * Represents a graphic calculator.
   * @constructor
@@ -267,7 +270,7 @@ class Graphic {
 }
 
 /** Class representing a real elliptic curve.*/
-class RealCurveGraph extends Graphic {
+export class RealCurveGraph extends Graphic {
   /**
   * Represents a graphic calculator.
   * @constructor
@@ -312,7 +315,7 @@ class RealCurveGraph extends Graphic {
 
 
 /** Class representing a modular elliptic curve.*/
-class ModCurveGraph extends Graphic {
+export class ModCurveGraph extends Graphic {
   /**
   * Represents a graphic calculator.
   * @constructor
