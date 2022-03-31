@@ -452,19 +452,19 @@ class ModCurveGraph extends Graphic {
     super(element);
   }
 
-  display_points(list_points) {
+  displayPoints(list_points) {
     var that = this;
     list_points.forEach(function (item) {
       that.addStaticPoint(item);
     });
   }
 
-  display_click_points(list_point){
+  displayClickPoints(list_point){
     var that = this;
     // Find the pixel coordinates of the graphpaper origin:
     that.calculator.mathToPixels({ x: 0, y: 0 });
     // Find the math coordinates of the mouse
-    var calculatorRect = calculator.getBoundingClientRect();
+    var calculatorRect = this.element.getBoundingClientRect();
     document.addEventListener('click', function(evt) {
         var coordonnees_souris = that.calculator.pixelsToMath({
             x: evt.clientX - calculatorRect.left,
@@ -482,7 +482,4 @@ class ModCurveGraph extends Graphic {
         
     });
   }
-
-
-
 }  
