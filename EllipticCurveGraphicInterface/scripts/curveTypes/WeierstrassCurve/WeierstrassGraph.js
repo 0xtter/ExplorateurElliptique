@@ -66,13 +66,13 @@ class WeierstrassGraph extends RealCurveGraph {
       { id: `y_{${this.pointId}}`, latex: `y_{${this.pointId}}=-a_{1}x_{${this.pointId}}-a_{3}-g_{${idL}}x_{${this.pointId}}+g_{${idL}}x_{${idP}}-y_{${idP}}` },
       { id: `y_{n${this.pointId}}`, latex: `y_{n${this.pointId}}=g_{${idL}}x_{${this.pointId}}-g_{${idL}}x_{${idP}}+y_{${idP}}` },
       { id: `p_{${this.pointId}}`, latex: `p_{${this.pointId}} = (x_{${this.pointId}},y_{${this.pointId}})`, pointStyle: "POINT", color: this.pointColor, pointSize: 15 },
-      { id: `p_{n${this.pointId}}`, latex: `p_{${this.pointId}} = (x_{${this.pointId}},y_{n${this.pointId}})`, pointStyle: "OPEN", color: this.pointColor }
+      { id: `p_{n${this.pointId}}`, latex: `p_{n${this.pointId}} = (x_{${this.pointId}},y_{n${this.pointId}})`, pointStyle: "OPEN", color: this.pointColor }
     ]);
     this.addSegment([`x_{${this.pointId}}`, `x_{${this.pointId}}`], [`y_{${this.pointId}}`, `y_{n${this.pointId}}`]);
     return this.pointId, this.lineId, this.segmentID;
   }
 
-    
+
   /**
    * shows the tangent at the point P
    *
@@ -87,7 +87,7 @@ class WeierstrassGraph extends RealCurveGraph {
       { id: `y_{${this.pointId}}`, latex: `y_{${this.pointId}}=-a_{1}x_{${this.pointId}}-a_{3}-g_{${idL}}x_{${this.pointId}}+g_{${idL}}x_{${idP}}-y_{${idP}}` },
       { id: `y_{n${this.pointId}}`, latex: `y_{n${this.pointId}}=g_{${idL}}x_{${this.pointId}}-g_{${idL}}x_{${idP}}+y_{${idP}}` },
       { id: `p_{${this.pointId}}`, latex: `p_{${this.pointId}} = (x_{${this.pointId}},y_{${this.pointId}})`, pointStyle: "POINT", color: this.pointColor, pointSize: 15 },
-      { id: `p_{n${this.pointId}}`, latex: `p_{${this.pointId}} = (x_{${this.pointId}},y_{n${this.pointId}})`, pointStyle: "OPEN", color: this.pointColor }
+      { id: `p_{n${this.pointId}}`, latex: `p_{n${this.pointId}} = (x_{${this.pointId}},y_{n${this.pointId}})`, pointStyle: "OPEN", color: this.pointColor }
     ]);
 
     this.addSegment([`x_{${this.pointId}}`, `x_{${this.pointId}}`], [`y_{${this.pointId}}`, `y_{n${this.pointId}}`]);
@@ -95,28 +95,51 @@ class WeierstrassGraph extends RealCurveGraph {
   }
 
   /**
-   * shows the addition of two point given their id
+   * shows the double of a point given his id
    *
    * @param {number} idP - The id of the first point 
-   * @param {number} idQ - The id of the second point  
    * @return {number} return the id of the point created
    * @return {number} return the id of line created 
    * @return {number} return the id of the segment created
    **/
-   showDoublingPoint(idP, idQ) {
+  showDoublingPoint(idP) {
     this.pointId++;
 
-    let idL = this.addLineBetweenTwoPoints(idP, idQ);
+    let idL = this.addTangent(idP);
 
     this.calculator.setExpressions([
-      { id: `x_{${this.pointId}}`, latex: `x_{${this.pointId}}=g_{${idL}}^{2}+a_{1}g_{${idL}}-a_{2}-x_{${idP}}-x_{${idQ}}` },
+      { id: `x_{${this.pointId}}`, latex: `x_{${this.pointId}}=g_{${idL}}^{2}+g_{${idL}}a_{1}-a_{2}-2x_{${idP}}` },
       { id: `y_{${this.pointId}}`, latex: `y_{${this.pointId}}=-a_{1}x_{${this.pointId}}-a_{3}-g_{${idL}}x_{${this.pointId}}+g_{${idL}}x_{${idP}}-y_{${idP}}` },
       { id: `y_{n${this.pointId}}`, latex: `y_{n${this.pointId}}=g_{${idL}}x_{${this.pointId}}-g_{${idL}}x_{${idP}}+y_{${idP}}` },
       { id: `p_{${this.pointId}}`, latex: `p_{${this.pointId}} = (x_{${this.pointId}},y_{${this.pointId}})`, pointStyle: "POINT", color: this.pointColor, pointSize: 15 },
-      { id: `p_{n${this.pointId}}`, latex: `p_{${this.pointId}} = (x_{${this.pointId}},y_{n${this.pointId}})`, pointStyle: "OPEN", color: this.pointColor }
+      { id: `p_{n${this.pointId}}`, latex: `p_{n${this.pointId}} = (x_{${this.pointId}},y_{n${this.pointId}})`, pointStyle: "OPEN", color: this.pointColor }
     ]);
 
     this.addSegment([`x_{${this.pointId}}`, `x_{${this.pointId}}`], [`y_{${this.pointId}}`, `y_{n${this.pointId}}`]);
     return this.pointId, this.lineId, this.segmentID;
+  }
+
+  /**
+   * shows the tangent at the point P
+   *
+   * @param {number} idP - The id of the point 
+   * @return {number} return the id of the line created
+   **/
+  addTangent(idP) {
+    if (typeof idP != "number") {
+      throw new Error("'idP' must be a number");
+    }
+
+    try {
+      this.lineId++;
+      this.calculator.setExpressions([
+        { id: `g_{${this.lineId}}`, latex: `g_{${this.lineId}}=\\frac{3x_{${idP}}^{2}+2a_{2}x_{${idP}}-a_{1}y_{${idP}}+a_{4}}{2y_{${idP}}+a_{1}x_{${idP}}+a_{3}}` },
+        { id: `b_{${this.lineId}}`, latex: `b_{${this.lineId}}=y_{${idP}}-g_{${this.lineId}}x_{${idP}}` },
+        { id: `l_{${this.lineId}}`, latex: `y_{l${this.lineId}} = g_{${this.lineId}}*x + b_{${this.lineId}}`, lineOpacity: 1 }
+      ]);
+      return this.lineId;
+    } catch (error) {
+      throw new Error(`An error has occured creating the line : ${error}`);
+    }
   }
 }

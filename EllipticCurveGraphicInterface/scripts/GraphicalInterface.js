@@ -6,10 +6,9 @@ class Graphic {
   * @param {string} element - The ID of the HTML element where the calculator will be.
   */
   constructor(element) {
-    try {
-      this.element = document.getElementById(element);
-    } catch (error) {
-      throw error;
+    this.element = document.getElementById(element);
+    if (this.element == undefined) {
+      throw new Error(`Element : ${element} does not exist.`)
     }
     this.calculator = Desmos.GraphingCalculator(this.element);
     this.setup();
@@ -19,11 +18,8 @@ class Graphic {
     this.segemntColor = "#2d70b3";
 
     this.pointId = 0;
-    this.points = {};
     this.lineId = 0;
-    this.lines = {};
     this.segmentID = 0;
-    this.segments = {};
   }
 
   get getElement() {
@@ -33,7 +29,9 @@ class Graphic {
   get getcalculator() {
     return this.calculator;
   }
-
+  /**
+   * Setup the calculator with specified settings.
+   */
   setup() {
     this.calculator.updateSettings({
       keypad: false,
@@ -47,16 +45,43 @@ class Graphic {
     });
   }
 
+  /**
+   * Save the current state of the graphic. This state can be loaded by using loadGraphicState()
+   */
   saveGraphicState() {
     this.savedState = this.calculator.getState();
   }
 
+  /**
+   * Load the latest state of the graphic. A state can be saved using saveGraphicState()
+   */
   loadGraphicState() {
     this.calculator.setState(this.savedState);
   }
 
+  /**
+   * Return the Desmos Expression giving his id
+   * @param id - The id of the Desmos Expression
+   * @returns The expression
+   */
   getExpressionById(id) {
-    return this.calculator.getExpressions().find(element => element.id == id)
+    let exp = this.calculator.getExpressions().find(element => element.id == id);
+    if (exp == undefined) {
+      console.warn(`id : ${id} does not exist.`);
+    }
+    return exp
+  }
+
+  /**
+   * Set the parameters of an expression giving her id.
+   * @param exp - The expression which you want to change the parameters of
+   */
+  setExpressionParameters(exp,params) {
+    console.log(this.getExpressionById(exp));
+    // if(this.getExpressionById(exp) == undefined) return;
+    // console.log({...{id:`${exp}`}, ...params});
+    // this.calculator.setExpression({...{id:`${exp}`}, ...{exp}});
+    return exp
   }
 
   /**
@@ -122,14 +147,18 @@ class Graphic {
   }
 
   /**
-   * Change la valeur d'un paramètre par exemple : x_{i}, y_{i}, a_1, g_{i}, b_{i} etc...
+   * Change the value of a parameter for example : x_{i}, y_{i}, a_{i}, g_{i}, b_{i} etc...
+   * @param param - The parameter you want to change the value
+   * @param value - The value you want to put in this parameter
    */
   setValueOfParameter(param, value) {
     this.calculator.setExpression({ id: `${param}`, latex: `${param}=${value}` })
   }
 
   /**
-   * renvoie la valeur d'un paramètre par exemple : x_{i}, y_{i}, a_1, g_{i}, b_{i} etc...
+   * Get the value of a parameter for example : x_{i}, y_{i}, a_{i}, g_{i}, b_{i} etc...
+   * @param param - The parameter from where you want to extract the value
+   * @returns The value of the parameter
    */
   getValueOfParameter(param) {
     return this.calculator.model.expressionAnalysis[param].evaluation.value;
@@ -278,34 +307,18 @@ class RealCurveGraph extends Graphic {
   }
 
   /**
-   * show the curve on the graph
-   */
-  showCurve() {
-    throw new Error('You have to implement the method showCurve for this curve!');
-  }
-
-  /**
-   * add a point on the curve giving his x position on the graph
-   * @param {number} xPos - The point X coordinate 
-   * @return {number} return the id of the point created.
-   */
-  addCurvePoint(xPos) {
-    throw new Error('You have to implement the method addCurvePoint for this curve!');
-  }
-
-  /**
    * create a point in the expression list giving his x position, the expression of his y value(positive and negative)
    * @param {number} xPos - The point X coordinate 
    * @param {number} yPositiveExpression - The expression of the positive solution of y in latex
    * @param {number} yNegativeExpression - The expression of the negative solution of y in latex
    */
-  addCurvePointInExpressions(xPos,yPositiveExpression,yNegativeExpression,){
+  addCurvePointInExpressions(xPos, yPositiveExpression, yNegativeExpression,) {
     this.calculator.setExpressions([
-      {id: `x_{${this.pointId}}`, latex: `x_${this.pointId}=${xPos}` },
-      {id: `y_{p${this.pointId}}`, latex: `y_{p${this.pointId}}=${yPositiveExpression}` },
-      {id: `y_{n${this.pointId}}`, latex: `y_{n${this.pointId}}=${yNegativeExpression}` },
-      {id: `y_{${this.pointId}}`, latex: `y_{${this.pointId}} = y_{p${this.pointId}}` },
-      {id: `p_{${this.pointId}}`, latex: `p_{${this.pointId}}=(x_{${this.pointId}},y_{${this.pointId}})` }
+      { id: `x_{${this.pointId}}`, latex: `x_${this.pointId}=${xPos}` },
+      { id: `y_{p${this.pointId}}`, latex: `y_{p${this.pointId}}=${yPositiveExpression}` },
+      { id: `y_{n${this.pointId}}`, latex: `y_{n${this.pointId}}=${yNegativeExpression}` },
+      { id: `y_{${this.pointId}}`, latex: `y_{${this.pointId}} = y_{p${this.pointId}}` },
+      { id: `p_{${this.pointId}}`, latex: `p_{${this.pointId}}=(x_{${this.pointId}},y_{${this.pointId}})` }
     ]);
   }
 }
@@ -329,31 +342,31 @@ class ModCurveGraph extends Graphic {
     });
   }
 
-  displayClickPoints(list_point){
+  displayClickPoints(list_point) {
     var that = this;
     // Find the pixel coordinates of the graphpaper origin:
     that.calculator.mathToPixels({ x: 0, y: 0 });
     // Find the math coordinates of the mouse
     var calculatorRect = this.element.getBoundingClientRect();
-    document.addEventListener('click', function(evt) {
-        var coordonnees_souris = that.calculator.pixelsToMath({
-          x: evt.clientX - calculatorRect.left,
-          y: evt.clientY - calculatorRect.top
-        })
-        var x = coordonnees_souris.x;
-        var y = coordonnees_souris.y;
-        var x_arrondi = Math.round(x);
-        var y_arrondi = Math.round(y);
-        list_point.forEach(function(item) {
-            if ((x_arrondi==item[0]) && (y_arrondi==item[1])){
-                console.log([x_arrondi,y_arrondi]) 
-            };
-        });
-        
+    document.addEventListener('click', function (evt) {
+      var coordonnees_souris = that.calculator.pixelsToMath({
+        x: evt.clientX - calculatorRect.left,
+        y: evt.clientY - calculatorRect.top
+      })
+      var x = coordonnees_souris.x;
+      var y = coordonnees_souris.y;
+      var x_arrondi = Math.round(x);
+      var y_arrondi = Math.round(y);
+      list_point.forEach(function (item) {
+        if ((x_arrondi == item[0]) && (y_arrondi == item[1])) {
+          console.log([x_arrondi, y_arrondi])
+        }
+      });
+
     });
   }
 
-  stopClickPoints(){
+  stopClickPoints() {
     document.removeEventListener('click');
   }
 }  

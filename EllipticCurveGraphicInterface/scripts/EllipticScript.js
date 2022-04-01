@@ -3,19 +3,13 @@ function main() {
     let graph1 = new WeierstrassGraph("test", 0, 0, 0, 1, 2);
     graph1.showCurve();
 
-    // let i =0
-    // this.setInterval(() => {
-    //     graph1.setValueOfParameter("a_1",3)
-    //     i++;
-    // }, 10);
-
     document.getElementById('button1').onclick = function () {
         graph1.loadGraphicState();
     };
     
     document.getElementById('button2').onclick = function () {
         graph1.saveGraphicState();
-        console.log(graph1.getValueOfParameter('x_{1}'));
+        console.log(JSON.stringify(graph1.getExpressionById("h_{1}")));
     };    
     
     document.getElementById('button5').onclick = function () {
@@ -32,9 +26,8 @@ function main() {
     
     document.getElementById('button7').onclick = function () {
         graph1.addCurvePoint(0);
-        graph1.addCurvePoint(2);
-        graph1.showAdditionOfPoints(1,2);
-        for(let i=3;i<6;i++){
+        graph1.showDoublingPoint(1);
+        for(let i=2;i<10;i++){
             graph1.showAdditionOfPoints(1,i);
         }
     };
